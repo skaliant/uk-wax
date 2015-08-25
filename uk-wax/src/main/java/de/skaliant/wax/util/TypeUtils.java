@@ -51,6 +51,23 @@ public class TypeUtils
 	{
 		return (t == Boolean.class) || (t == Byte.class) || (t == Short.class) || (t == Character.class) || (t == Integer.class) || (t == Long.class) || (t == Float.class) || (t == Double.class);
 	}
+	
+
+	/**
+	 * If the type <code>type</code> is a generic type, try to find the type of the first type argument.
+	 * E.g. for a generic List declaration, this will deliver the list type.
+	 * 
+	 * @param type Possibly parameterized type
+	 * @return First generic type argument or null, if there is none
+	 */
+	public static Type firstGenericArgument(Type type)
+	{
+		for (Type t : TypeUtils.typeArguments(type))
+		{
+			return t;
+		}
+		return null;
+	}
 
 
 	public static Object defaultValue(Type type)

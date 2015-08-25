@@ -22,16 +22,18 @@ class PartImpl
 {
 	private List<HeaderField> header = Collections.emptyList();
 	private StorageHandler storage = null;
+	private String contentType = null;
 	private String fileName = null;
 	private String name = null;
 
 
-	PartImpl(List<HeaderField> header, String name, String fileName,
+	PartImpl(List<HeaderField> header, String name, String fileName, String contentType,
 			StorageHandler storage)
 	{
 		this.name = name;
 		this.fileName = fileName;
 		this.header = header;
+		this.contentType = contentType;
 		this.storage = storage;
 	}
 
@@ -41,6 +43,12 @@ class PartImpl
 		return storage.getSize();
 	}
 
+	
+	public String getContentType()
+	{
+		return contentType;
+	}
+	
 
 	public String getName()
 	{
@@ -53,6 +61,13 @@ class PartImpl
 		return header;
 	}
 
+	
+	public File getAsFile()
+		throws IOException
+	{
+		return storage.getAsFile();
+	}
+	
 
 	public String getValue(String encoding)
 		throws IOException
@@ -83,8 +98,27 @@ class PartImpl
 		storage.writeTo(file);
 	}
 
+	
+	public String getFileNameRefined()
+	{
+		if (MiscUtils.notEmpty(fileName))
+		{
+			char[] seps = { '/', '\\' };
+			
+			for (char s : seps)
+			{
+				if (fileName.indexOf(s) != -1)
+				{
+					fileName = fileName.substring(fileName.lastIndexOf(s) + 1);
+				}
+			}
+			return fileName;
+		}
+		return null;
+	}
+	
 
-	public String getFileName()
+	public String getFileNameRaw()
 	{
 		return fileName;
 	}

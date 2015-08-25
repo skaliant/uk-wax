@@ -57,7 +57,7 @@ public class UploadTest
 			{
 				if (p.isFile() && (p.getSize() > 0))
 				{
-					p.writeTo(new File(targetDir, p.getFileName()));
+					p.writeTo(new File(targetDir, p.getFileNameRefined()));
 				}
 			}
 		}

@@ -2,7 +2,6 @@ package de.skaliant.wax.util;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -43,6 +42,7 @@ public class Injector
 	 */
 	public static void injectBeanProperties(Object instance, ParameterProvider byName, List<?> byType)
 	{
+		ParameterValueProvider pvp = new ParameterValueProvider();
 		Bean<?> bean = Bean.wrap(instance);
 		
 		try
@@ -69,36 +69,14 @@ public class Injector
 			 */
 			for (String n : byName.getParameterNames())
 			{
-				/*
-				 * In case the name contains at least one dot: resolve bean paths and apply values to the
-				 * last target in path
-				 */
-				if (n.indexOf('.') != -1)
+				pvp.arr = byName.getParameterValues(n);
+				try
 				{
-					List<String> nameChain = MiscUtils.split(n, '.');
-					Bean<?> target = bean;
-					
-					/*
-					 * 1. Resolve the path to the final target property
-					 */
-					while ((target != null) && (nameChain.size() > 1))
-					{
-						target = new PropertyInjection(target, nameChain.remove(0)).resolve();
-					}
-					/*
-					 * 2. Apply to the final destination
-					 */
-					if ((target != null) && (nameChain.size() == 1))
-					{
-						new PropertyInjection(target, nameChain.get(0)).apply(byName.getParameterValues(n));
-					}
+					StatementResolver.setValueTo(bean.getInstance(), n, pvp);
 				}
-				else
+				catch (Exception ex)
 				{
-					/*
-					 * Otherwise: simply apply the value(s) to the property itself
-					 */
-					new PropertyInjection(bean, n).apply(byName.getParameterValues(n));
+					//
 				}
 			}
 		}
@@ -192,137 +170,15 @@ public class Injector
 	}
 	
 	
-	private static class PropertyInjection
+	private static class ParameterValueProvider
+		implements StatementResolver.ValueProvider
 	{
-		private Bean<?> bean = null;
-		private String propertyName = null;
-		private Integer index = null;
+		private String[] arr = null;
 		
-		
-		private PropertyInjection(Bean<?> bean, String propertyName)
-		{
-			int rectOpen = propertyName.indexOf('[');
-			int rectClose = propertyName.indexOf(']');
-			
-			this.bean = bean;
-			/*
-			 * Support for indexed properties of type array or List
-			 */
-			if ((rectOpen != -1) && (rectClose != -1))
-			{
-				/*
-				 * Sanity checks: opening bracket must not be first char, closing must be last, and there must be
-				 * at least one char between the two
-				 */
-				if ((rectOpen > 0) && (rectClose > (rectOpen + 1)) && (rectClose == (propertyName.length() - 1)))
-				{
-					try
-					{
-						index = Integer.valueOf(propertyName.substring(rectOpen + 1, rectClose));
-					}
-					catch (Exception ex)
-					{
-						//
-					}
-				}
-				/*
-				 * Cut off everything starting with the first bracket, be it opening or closing
-				 */
-				propertyName = propertyName.substring(0, Math.min(rectOpen, rectClose));
-			}
-			this.propertyName = propertyName;
-		}
-		
-		
-		/**
-		 * Assumes the current setting is a bean property statement that should be resolved.
-		 * 
-		 * @return Result of the statement, which might be null for different reasons
-		 */
-		private Bean<?> resolve()
-		{
-			Object r = bean.resolve(propertyName);
-			
-			if ((r != null) && (index != null))
-			{
-				if (r.getClass().isArray() && (Array.getLength(r) > index))
-				{
-					r = Array.get(r, index);
-				}
-				else if ((r instanceof List) && (((List<?>) r).size() > index))
-				{
-					r = ((List<?>) r).get(index);
-				}
-				else
-				{
-					r = null;
-				}
-			}
-			return r == null ? null : Bean.wrap(r);
-		}
-		
-		
-		/**
-		 * Assumes the current setting is a property statement the value(s) should be assigned to.
-		 * 
-		 * @param values Value(s)
-		 * @throws Exception
-		 */
-		private void apply(String[] values)
-		{
-			if (bean.hasProperty(propertyName) && (values != null) && (values.length != 0))
-			{
-				Type type = bean.getPropertyType(propertyName);
-				
-				if (index != null)
-				{
-					if (bean.isReadable(propertyName))
-					{
-						Object current = bean.get(propertyName);
-						
-						if (current instanceof List)
-						{
-							@SuppressWarnings("unchecked")
-							List<Object> ls = (List<Object>) current;
-							Type elementType = Object.class;
-							Object v = null;
 
-							for (Type t : TypeUtils.typeArguments(type))
-							{
-								elementType = t;
-								break;
-							}
-							v = Converter.convertValue(elementType, values);
-							if (v != null)
-							{
-								while (ls.size() < (index + 1))
-								{
-									ls.add(null);
-								}
-								ls.set(index, v);
-							}
-						}
-						else if ((current != null) && current.getClass().isArray() && (Array.getLength(current) > index))
-						{
-							Object v = Converter.convertValue(current.getClass().getComponentType(), values);
-							
-							if (v != null)
-							{
-								Array.set(current, index, v);
-							}
-						}
-					}
-				}
-				else
-				{
-					Object v = Converter.convertValue(type, values);
-					
-					if ((v != null) && (bean.isWriteable(propertyName)))
-					{
-						bean.set(propertyName, v);
-					}
-				}
-			}
+		public Object provide(Type type)
+		{
+			return Converter.convertValue(type, arr);
 		}
 	}
 }

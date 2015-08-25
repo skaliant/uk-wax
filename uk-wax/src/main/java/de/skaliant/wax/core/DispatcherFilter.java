@@ -15,7 +15,7 @@ import de.skaliant.wax.core.model.Bootstrapper;
 
 
 /**
- * 
+ * A servlet filter implementing a dispatcher.
  *
  * @author Udo Kastilan
  */

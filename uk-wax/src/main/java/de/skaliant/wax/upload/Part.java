@@ -27,15 +27,33 @@ public interface Part
 	 * File name. This is the original name of the file the user selected for
 	 * uploading. Depending on the browser, this may contain path information as
 	 * well. For file fields which are empty on form submitting, the file name
-	 * usually is empty, not null; make sure to check for both anyway. However,
-	 * checking this information is not a good way to check whether a file has
-	 * been selected by the user; compare getSize() for being greater than 0
+	 * in the header usually is present, but empty. The MultipartParser will normalize
+	 * this to a null value. However, in order to check for a file being present, you
+	 * should compare {@link #getSize()} to being greater than 0 instead.
 	 * instead.
 	 * 
 	 * @return
 	 */
-	String getFileName();
+	String getFileNameRaw();
+	
+	/**
+	 * File name. This is the refined value of the raw file name data the browser originally sent.
+	 * All path information, if present, will be discarded, and the result will only be not null,
+	 * if there actually is a file name. No need to check for both null and empty String in this case.
+	 * 
+	 * @return
+	 */
+	String getFileNameRefined();
 
+	
+	/**
+	 * The content type as given by the uploader. This information might be missing or simply
+	 * be wrong, so handle with care.
+	 * 
+	 * @return
+	 */
+	String getContentType();
+	
 
 	/**
 	 * Determins whether this had been a file field. Currently, the file name is
@@ -82,6 +100,16 @@ public interface Part
 	InputStream getStream()
 		throws IOException;
 
+	/**
+	 * Writes content to a temporary file, if that hasn't been done before anyway, and
+	 * returns a reference to this file. These files will be cleaned up via the MultipartParser.
+	 * 
+	 * @return Temporary file
+	 * @throws IOException
+	 */
+	File getAsFile()
+		throws IOException;
+	
 
 	/**
 	 * Write content of this part to a file. In case content is held as temp file,

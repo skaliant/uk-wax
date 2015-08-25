@@ -17,6 +17,7 @@ import de.skaliant.wax.core.model.MapBasedParameterProvider;
 import de.skaliant.wax.core.model.ParameterProvider;
 import de.skaliant.wax.core.model.RequestAttributeRedirectStore;
 import de.skaliant.wax.core.model.RouterResult;
+import de.skaliant.wax.core.model.UploadInjector;
 import de.skaliant.wax.core.model.impl.DefaultCall;
 import de.skaliant.wax.results.Result;
 import de.skaliant.wax.upload.MultipartParser;
@@ -26,16 +27,24 @@ import de.skaliant.wax.util.logging.Log;
 
 
 /**
- * 
+ * A neutral form of the dispatcher. May be activated by a servlet or a filter.
  * 
  * @author Udo Kastilan
  */
 public class Dispatcher
 {
 	private final static Log LOG = Log.get(Dispatcher.class);
+	/**
+	 * Information on this dispatcher
+	 */
 	private DispatcherInfo info = null;
 
 
+	/**
+	 * Create the instance, give information.
+	 * 
+	 * @param info Dispatcher information
+	 */
 	public Dispatcher(DispatcherInfo info)
 	{
 		this.info = info;
@@ -43,11 +52,15 @@ public class Dispatcher
 
 
 	/**
+	 * Handle a call. Typically, a servlet or a filter will be activated and forward to this method.
+	 * Servlet instances should give <code>request.getPathInfo()</code> as path, while Filter instances
+	 * should give <code>request.getServletPath()</code>. This extra path information will be examined
+	 * by the router in order to find a controller/action responsible for the request.
 	 * 
-	 * @param app
-	 * @param req
-	 * @param resp
-	 * @param path
+	 * @param app ServletContext (application scope)
+	 * @param req Request
+	 * @param resp Response
+	 * @param path Extra path information (any rest after whatever has triggered the servlet/filter)
 	 * @throws ServletException
 	 * @throws IOException
 	 */
@@ -152,9 +165,7 @@ public class Dispatcher
 			{
 				mup = MultipartParser.create(call.getContentType(), call.getRequest().getInputStream());
 				params = MapBasedParameterProvider.create(call, mup, "utf-8"); // TOOD make encoding configurable
-				/*
-				 * TODO inject blobs ... parts ... files!?
-				 */
+				UploadInjector.injectUploads(ctrl, mup);
 			}
 			/*
 			 * 3.) Inject parameters and magic values to bean properties

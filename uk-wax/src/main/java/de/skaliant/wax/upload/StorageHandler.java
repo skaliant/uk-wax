@@ -44,6 +44,15 @@ interface StorageHandler
 	 */
 	void writeTo(File file)
 		throws IOException;
+	
+	/**
+	 * 
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	File getAsFile()
+		throws IOException;
 
 
 	/**

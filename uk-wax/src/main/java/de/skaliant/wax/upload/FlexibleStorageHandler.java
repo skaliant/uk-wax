@@ -90,6 +90,31 @@ class FlexibleStorageHandler
 	{
 		return written;
 	}
+	
+	
+	public File getAsFile()
+		throws IOException
+	{
+		if (file == null)
+		{
+			File f = File.createTempFile(PREFIX, SUFFIX, tempDir);
+			
+			try
+			{
+				writeTo(f);
+				file = f;
+			}
+			catch (IOException ex)
+			{
+				if (f.isFile())
+				{
+					f.delete();
+				}
+				throw ex;
+			}
+		}
+		return file;
+	}
 
 
 	public void writeTo(File to)

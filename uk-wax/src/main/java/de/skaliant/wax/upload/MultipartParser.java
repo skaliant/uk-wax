@@ -104,6 +104,7 @@ public class MultipartParser
 			StorageHandler sh = FlexibleStorageHandler.create(tempDir, threshold);
 			List<HeaderField> headers = new ArrayList<HeaderField>(3);
 			OutputStream out = null;
+			String contentType = null;
 			String name = null;
 			String fileName = null;
 			String line = null;
@@ -129,6 +130,14 @@ public class MultipartParser
 						{
 							name = hf.getParam("name");
 							fileName = hf.getParam("filename");
+							if ((fileName != null) && (fileName.length() == 0))
+							{
+								fileName = null;
+							}
+						}
+						else if ("Content-Type".equalsIgnoreCase(hf.getName()))
+						{
+							contentType = hf.getValue();
 						}
 						headers.add(hf);
 					}
@@ -169,7 +178,7 @@ public class MultipartParser
 				throw new UploadFormatException(
 						"Boundary not finished according to standard");
 			}
-			p = new PartImpl(headers, name, fileName, sh);
+			p = new PartImpl(headers, name, fileName, contentType, sh);
 			parts.add(p);
 		}
 		return p;
