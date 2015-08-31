@@ -1,5 +1,7 @@
 package de.skaliant.wax.util.logging;
 
+import java.io.File;
+
 /**
  * 
  * 
@@ -8,26 +10,42 @@ package de.skaliant.wax.util.logging;
 public abstract class Log
 {
 	private static Provider provider = null;
+	
 
-	static
+	public static void init(File configFolder)
 	{
-		try
+		if (provider == null)
 		{
-			Class.forName("org.apache.log4j.Logger");
-			provider = Provider.class.cast(Class.forName(
-					"de.skaliant.wax.util.Log4JAdapter").newInstance());
+			try
+			{
+				Class.forName("org.apache.log4j.Logger");
+				provider = Provider.class.cast(Class.forName(
+						"de.skaliant.wax.util.logging.Log4JAdapter").newInstance());
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+				provider = new JuliAdapter();
+			}
+			provider.init(configFolder);
+			provider.create(Log.class.getName()).info(
+					"Logging is proudly presented by " + provider);
 		}
-		catch (Exception ex)
-		{
-			provider = new JuliAdapter();
-		}
-		provider.create(Log.class.getName()).info(
-				"Logging is proudly presented by " + provider);
+	}
+	
+	
+	public static boolean isInitialized()
+	{
+		return provider != null;
 	}
 
 
 	public static Log get(String section)
 	{
+		if (!isInitialized())
+		{
+			init(null);
+		}
 		return provider.create(section);
 	}
 
@@ -73,8 +91,11 @@ public abstract class Log
 
 	public abstract void fatal(Object msg, Throwable t);
 
+	
 	public static interface Provider
 	{
+		void init(File configFolder);
+		
 		Log create(String section);
 	}
 }

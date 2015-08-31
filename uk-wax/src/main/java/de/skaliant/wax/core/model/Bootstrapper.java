@@ -17,6 +17,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.skaliant.wax.core.ControllerManager;
 import de.skaliant.wax.core.Router;
 import de.skaliant.wax.core.ViewEngine;
 import de.skaliant.wax.core.model.impl.DefaultControllerManager;
@@ -34,7 +35,6 @@ import de.skaliant.wax.util.logging.Log;
 public class Bootstrapper
 {
 	private final static String ATTR_CORE = "__wax.core__";
-	private final static Log LOG = Log.get(Bootstrapper.class);
 	private final static String PREFIX_VIEWS = "views.";
 	private final static String PREFIX_ROUTER = "router.";
 	private final static String PREFIX_CONTROLLER = "controller.";
@@ -52,48 +52,18 @@ public class Bootstrapper
 	}
 	
 	
-	private static DispatcherInfo configure(ServletContext app, ConfigWrapper conf)
+	private synchronized static DispatcherInfo configure(ServletContext app, ConfigWrapper conf)
 	{
 		DispatcherInfo disp = new DispatcherInfo();
-		ControllerManager controllerManager = loadAndCreate(ControllerManager.class, 
-				conf.getParam("core.controllerManager"), DefaultControllerManager.class);
-		ViewEngine viewEngine = loadAndCreate(ViewEngine.class, 
-				conf.getParam("core.viewEngine"), JspViewEngine.class);
-		Router router = loadAndCreate(Router.class, 
-				conf.getParam("core.router"), DefaultRouter.class);
-		Map<String, String> controllerManagerParams = new HashMap<String, String>();
-		Map<String, String> viewEngineParams = new HashMap<String, String>();
-		Map<String, String> routerParams = new HashMap<String, String>();
 		/*
-		 * Configure these three main modules
+		 * Configure and set implementations for core functions
 		 */
-		for (String n : conf.getParamNames())
-		{
-			if (n.startsWith(PREFIX_VIEWS))
-			{
-				viewEngineParams.put(n.substring(PREFIX_VIEWS.length()), conf.getParam(n));
-			}
-			else if (n.startsWith(PREFIX_ROUTER))
-			{
-				routerParams.put(n.substring(PREFIX_ROUTER.length()), conf.getParam(n));
-			}
-			if (n.startsWith(PREFIX_CONTROLLER))
-			{
-				controllerManagerParams.put(n.substring(PREFIX_CONTROLLER.length()), conf.getParam(n));
-			}
-		}
-		/*
-		 * Inject init params
-		 */
-		Injector.injectBeanProperties(viewEngine.getConfig(), new MappedParams(viewEngineParams));
-		Injector.injectBeanProperties(router.getConfig(), new MappedParams(routerParams));
-		Injector.injectBeanProperties(controllerManager.getConfig(), new MappedParams(controllerManagerParams));
-		/*
-		 * Set implementations for core functions
-		 */
-		disp.setControllerManager(controllerManager);
-		disp.setRouter(router);
-		disp.setViewEngine(viewEngine);
+		disp.setControllerManager(configure(loadAndCreate(ControllerManager.class, 
+				conf.getParam("core.controllerManager"), DefaultControllerManager.class), conf, PREFIX_CONTROLLER));
+		disp.setRouter(configure(loadAndCreate(Router.class, 
+				conf.getParam("core.router"), DefaultRouter.class), conf, PREFIX_ROUTER));
+		disp.setViewEngine(configure(loadAndCreate(ViewEngine.class, 
+				conf.getParam("core.viewEngine"), JspViewEngine.class), conf, PREFIX_VIEWS));
 		/*
 		 * Try to find the servlet mapping's url pattern as identifier
 		 */
@@ -106,8 +76,27 @@ public class Bootstrapper
 	}
 	
 	
+	private static <C extends Configurable<?>> C configure(C c, ConfigWrapper conf, String prefix)
+	{
+		Map<String, String> map = new HashMap<String, String>();
+		
+		for (String n : conf.getParamNames())
+		{
+			if (n.startsWith(prefix))
+			{
+				map.put(n.substring(prefix.length()), conf.getParam(n));
+			}
+		}
+		new Injector().injectBeanProperties(c.getConfig(), new MappedParams(map));
+		return c;
+	}
+	
+	
 	private static String id(String servletMapping)
 	{
+		/*
+		 * TODO: more intelligent url pattern handling, create id independently of the pattern
+		 */
 		return servletMapping.replace("*", "");
 	}
 	
@@ -126,7 +115,7 @@ public class Bootstrapper
 		}
 		catch (Exception ex)
 		{
-			LOG.warn("Cannot parse web.xml for servlet mapping", ex);
+			Log.get(Bootstrapper.class).warn("Cannot parse web.xml for servlet mapping", ex);
 		}
 		return handy.mapping;
 	}
@@ -138,14 +127,14 @@ public class Bootstrapper
 		
 		if (name != null)
 		{
-			LOG.info("Trying to load and create instance of \"" + name + "\" as replacement for " + target.getSimpleName());
+			Log.get(Bootstrapper.class).info("Trying to load and create instance of \"" + name + "\" as replacement for " + target.getSimpleName());
 			try
 			{
 				c = target.cast(Class.forName(name).newInstance());
 			}
 			catch (Exception ex)
 			{
-				LOG.warn("Could not load \"" + name + '"', ex);
+				Log.get(Bootstrapper.class).warn("Could not load \"" + name + '"', ex);
 			}
 		}
 		if (c == null)
@@ -156,21 +145,21 @@ public class Bootstrapper
 			}
 			catch (Exception ex)
 			{
-				LOG.fatal("Could not load default implementation " + fallback.getSimpleName(), ex);
+				Log.get(Bootstrapper.class).fatal("Could not load default implementation " + fallback.getSimpleName(), ex);
 			}
 		}
 		return c;
 	}
 	
 	
-	private static DispatcherMap getCore(ServletContext app)
+	private static WaxCore getCore(ServletContext app)
 	{
-		DispatcherMap core = (DispatcherMap) app.getAttribute(ATTR_CORE);
+		WaxCore core = (WaxCore) app.getAttribute(ATTR_CORE);
 		
 		if (core == null)
 		{
-			LOG.info("Initializing core information");
-			app.setAttribute(ATTR_CORE, core = new DispatcherMap());
+			Log.get(Bootstrapper.class).info("Initializing core information");
+			app.setAttribute(ATTR_CORE, core = new WaxCore());
 		}
 		return core;
 	}

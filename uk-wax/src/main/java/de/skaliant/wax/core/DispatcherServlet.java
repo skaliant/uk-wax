@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.skaliant.wax.core.model.Bootstrapper;
+import de.skaliant.wax.util.logging.Log;
 
 
 /**
@@ -25,6 +26,8 @@ public class DispatcherServlet
 	public void init()
 		throws ServletException
 	{
+		Log.init(Environment.getInstance().getConfigLocation(getServletContext()));
+		Log.get(DispatcherServlet.class).info("Environment is \"" + Environment.getInstance().getHint() + '"');
 		dispatcher = new Dispatcher(Bootstrapper.configure(getServletContext(), getServletConfig()));
 	}
 

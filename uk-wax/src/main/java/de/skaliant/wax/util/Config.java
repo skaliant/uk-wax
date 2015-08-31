@@ -20,7 +20,30 @@ import org.w3c.dom.NodeList;
 
 
 /**
+ * Simple XML-based configuration with named values. Each configuration entry may have one or
+ * more values. The rules for the XML document structure are as follows:
  * 
+ * <ul>
+ * 	<li>The name of the root element is irrelevant, you may name it as you like (though I recommend "conf" or "config")</li>
+ *  <li>For each configuration entry, give a "entry" element defining both name and value(s)</li>
+ *  <li>The name of the entry is to be given via "id" attribute</li>
+ *  <li>If the the entry has 1 value, give it as text content of the "entry" element</li>
+ *  <li>If the entry has more than 1 value, insert a "value" element with a text node for each value</li>
+ * </ul>
+ *
+ * Example:
+ * 
+ * <pre>
+ * &lt;?xml version="1.0"?&gt;
+ * &lt;config&gt;
+ *   &lt;entry id="type"&gt;car&lt;/entry&gt;
+ *   &lt;entry id="colors"&gt;
+ *     &lt;value&gt;red&lt;/value&gt;
+ *     &lt;value&gt;green&lt;/value&gt;
+ *     &lt;value&gt;blue&lt;/value&gt;
+ *   &lt;/entry&gt;
+ * &lt;/config&gt;
+ * </pre>
  *
  * @author Udo Kastilan
  */
@@ -29,6 +52,13 @@ public class Config
 	private Map<String, List<String>> entries = new HashMap<String, List<String>>();
 
 
+	/**
+	 * Load configuration from a given file.
+	 * 
+	 * @param file File
+	 * @return Configuration
+	 * @throws Exception
+	 */
 	public static Config load(File file)
 		throws Exception
 	{
@@ -56,6 +86,13 @@ public class Config
 	}
 
 
+	/**
+	 * Load configuration from a stream. The stream will not be closed by this method.
+	 * 
+	 * @param source Source stream
+	 * @return Configuration
+	 * @throws Exception
+	 */
 	public static Config load(InputStream source)
 		throws Exception
 	{
@@ -98,36 +135,25 @@ public class Config
 		}
 		return conf;
 	}
-
-
-	private static List<Element> elements(NodeList nl)
-	{
-		List<Element> ls = Collections.emptyList();
-		int len = nl.getLength();
-
-		if (len > 0)
-		{
-			ls = new ArrayList<Element>(len);
-			for (int i = 0; i < len; i++)
-			{
-				Node n = nl.item(i);
-
-				if (n.getNodeType() == Node.ELEMENT_NODE)
-				{
-					ls.add((Element) n);
-				}
-			}
-		}
-		return ls;
-	}
 	
 	
+	/**
+	 * Get all entry ids (parameter names) available as a set.
+	 * 
+	 * @return Set of ids
+	 */
 	public Set<String> getIds()
 	{
 		return entries.keySet();
 	}
 	
-	
+
+	/**
+	 * Get the value count for a given entry.
+	 * 
+	 * @param id Entry id
+	 * @return Number of values
+	 */
 	public int getValueCount(String id)
 	{
 		List<String> ls = entries.get(id);
@@ -141,36 +167,50 @@ public class Config
 	}
 
 
-	private void setValues(String id, List<String> values)
-	{
-		entries.put(id, values);
-	}
-
-
-	private void setValue(String id, String value)
-	{
-		entries.put(id, Collections.singletonList(value));
-	}
-
-	
+	/**
+	 * Check whether an entry is available.
+	 * 
+	 * @param id Entry id
+	 * @return Is it available
+	 */
 	public boolean hasEntry(String id)
 	{
 		return entries.containsKey(id);
 	}
 
 
+	/**
+	 * Get all values for an entry.
+	 * 
+	 * @param id Entry id
+	 * @return Values, or null if the entry is not available 
+	 */
 	public List<String> getValues(String id)
 	{
 		return entries.get(id);
 	}
 
 
+	/**
+	 * Get the (first) value of an entry.
+	 * 
+	 * @param id Entry id
+	 * @return Value, or null if the value is not available
+	 */
 	public String getValue(String id)
 	{
 		return getValue(id, null);
 	}
 
 
+	/**
+	 * Try to interpret the value as a boolean value using Boolean.valueOf().
+	 * Returns the default value if the entry is not available.
+	 * 
+	 * @param id Entry id
+	 * @param def Default value
+	 * @return Value or default value
+	 */
 	public boolean getBooleanValue(String id, boolean def)
 	{
 		String s = getValue(id, null);
@@ -183,6 +223,13 @@ public class Config
 	}
 
 
+	/**
+	 * Try to interpret the value as a boolean value using Boolean.valueOf().
+	 * Returns false if the entry is not available.
+	 * 
+	 * @param id Entry id
+	 * @return Boolean value
+	 */
 	public boolean getBooleanValue(String id)
 	{
 		String s = getValue(id, null);
@@ -195,6 +242,13 @@ public class Config
 	}
 
 
+	/**
+	 * Get the value of an entry as Integer object.
+	 * 
+	 * @param id Entry id
+	 * @param def Default value to be returned if the entry is not available or cannot be converted into a number
+	 * @return Value or default value
+	 */
 	public int getIntValue(String id, int def)
 	{
 		String s = getValue(id, null);
@@ -215,7 +269,15 @@ public class Config
 	}
 
 
+	/**
+	 * Get the value of an entry as Integer object.
+	 * 
+	 * @param id Entry id
+	 * @return Converted value or null, if the entry is not available
+	 * @throws NumberFormatException If the value cannot be converted into a number
+	 */
 	public Integer getIntValue(String id)
+		throws NumberFormatException
 	{
 		String s = getValue(id, null);
 		
@@ -227,6 +289,13 @@ public class Config
 	}
 
 
+	/**
+	 * Get a (the first) value.
+	 * 
+	 * @param id Entry id
+	 * @param def Default value to be returned if the entry is not available
+	 * @return Value of default value
+	 */
 	public String getValue(String id, String def)
 	{
 		List<String> ls = entries.get(id);
@@ -239,4 +308,55 @@ public class Config
 		return v;
 	}
 
+
+	/**
+	 * Set values for an entry.
+	 * 
+	 * @param id Entry id
+	 * @param values values
+	 */
+	private void setValues(String id, List<String> values)
+	{
+		entries.put(id, values);
+	}
+
+
+	/**
+	 * Collect all element nodes in a node list into a list.
+	 * 
+	 * @param nl Node list
+	 * @return Element list
+	 */
+	private static List<Element> elements(NodeList nl)
+	{
+		List<Element> ls = Collections.emptyList();
+		int len = nl.getLength();
+
+		if (len > 0)
+		{
+			ls = new ArrayList<Element>(len);
+			for (int i = 0; i < len; i++)
+			{
+				Node n = nl.item(i);
+
+				if (n.getNodeType() == Node.ELEMENT_NODE)
+				{
+					ls.add((Element) n);
+				}
+			}
+		}
+		return ls;
+	}
+
+
+	/**
+	 * Sets a single value.
+	 * 
+	 * @param id Entry id
+	 * @param value Value
+	 */
+	private void setValue(String id, String value)
+	{
+		entries.put(id, Collections.singletonList(value));
+	}
 }

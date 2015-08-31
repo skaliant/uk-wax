@@ -13,13 +13,15 @@ import de.skaliant.wax.util.logging.Log;
 
 
 /**
- * What the Injector does for parameter and path information, the UploadInjector does for file uploads.
+ * What the Injector does for parameter and path information, the UploadInjector does for file uploads:
+ * try to inject data on controller properties. This time, data is uploaded files.
  *
  * @author Udo Kastilan
  */
 public class UploadInjector
 {
-	private final static Log LOG = Log.get(UploadInjector.class);
+	private final Log LOG = Log.get(UploadInjector.class);
+	private StatementResolver statementResolver = new StatementResolver();
 	
 	
 	/**
@@ -28,7 +30,7 @@ public class UploadInjector
 	 * @param instance Bean
 	 * @param multi MultipartParser instance handling the request
 	 */
-	public static void injectUploads(Object instance, MultipartParser multi)
+	public void injectUploads(Object instance, MultipartParser multi)
 	{
 		UploadedFileProvider ufp = new UploadedFileProvider();
 		
@@ -41,7 +43,7 @@ public class UploadInjector
 					ufp.part = p;
 					try
 					{
-						StatementResolver.setValueTo(instance, p.getName(), ufp);
+						statementResolver.setValueTo(instance, p.getName(), ufp);
 					}
 					catch (Exception ex)
 					{
@@ -86,7 +88,7 @@ public class UploadInjector
 					}
 					catch (Exception ex)
 					{
-						LOG.warn("Cannot provide upload as temporary file", ex);
+						Log.get(UploadedFileProvider.class).warn("Cannot provide upload as temporary file", ex);
 					}
 				}
 				else if (c == FileUpload.class)

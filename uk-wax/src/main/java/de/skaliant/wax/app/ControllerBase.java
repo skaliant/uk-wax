@@ -9,7 +9,8 @@ import de.skaliant.wax.util.logging.Log;
 
 
 /**
- * 
+ * Optional base class for controllers. Provides setters for the ServletContext, the request, and the 
+ * response object as well as a logger and the web application configuration.
  *
  * @author Udo Kastilan
  */

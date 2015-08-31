@@ -18,7 +18,8 @@ import de.skaliant.wax.util.logging.Log;
  */
 public class Injector
 {
-	private final static Log LOG = Log.get(Injector.class);
+	private final Log LOG = Log.get(Injector.class);
+	private StatementResolver statementResolver = new StatementResolver();
 
 	
 	/**
@@ -27,7 +28,7 @@ public class Injector
 	 * @param instance The bean
 	 * @param byName Named parameters
 	 */
-	public static void injectBeanProperties(Object instance, ParameterProvider byName)
+	public void injectBeanProperties(Object instance, ParameterProvider byName)
 	{
 		injectBeanProperties(instance, byName, null);
 	}
@@ -40,7 +41,7 @@ public class Injector
 	 * @param byName Named parameters
 	 * @param byType Special objects to be injected by their class type
 	 */
-	public static void injectBeanProperties(Object instance, ParameterProvider byName, List<?> byType)
+	public void injectBeanProperties(Object instance, ParameterProvider byName, List<?> byType)
 	{
 		ParameterValueProvider pvp = new ParameterValueProvider();
 		Bean<?> bean = Bean.wrap(instance);
@@ -72,7 +73,7 @@ public class Injector
 				pvp.arr = byName.getParameterValues(n);
 				try
 				{
-					StatementResolver.setValueTo(bean.getInstance(), n, pvp);
+					statementResolver.setValueTo(bean.getInstance(), n, pvp);
 				}
 				catch (Exception ex)
 				{
@@ -96,7 +97,7 @@ public class Injector
 	 * @param byType Parameters to be injected by their class type
 	 * @return Method argument array
 	 */
-	public static Object[] injectMethodArguments(Method method, ParameterProvider byName, List<String> pathInfoParts, List<?> byType)
+	public Object[] injectMethodArguments(Method method, ParameterProvider byName, List<String> pathInfoParts, List<?> byType)
 	{
 		Type[] paramTypes = method.getGenericParameterTypes();
 		Object[] args = new Object[paramTypes.length];

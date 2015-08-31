@@ -1,7 +1,14 @@
 package de.skaliant.wax.util.logging;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
+import de.skaliant.wax.core.Environment;
+import de.skaliant.wax.util.MiscUtils;
 
 
 /**
@@ -12,6 +19,48 @@ import java.util.logging.Logger;
 public class JuliAdapter
 	implements Log.Provider
 {
+	public void init(File configFolder)
+	{
+		String env = Environment.getInstance().getHint();
+		String[] test = {
+			"logging-" + env + ".properties",
+			"logging.properties"
+		};
+		boolean found = false;
+		
+		for (String s : test)
+		{
+			File f = new File(configFolder, s);
+			
+			if (f.exists())
+			{
+				InputStream in = null;
+				
+				try
+				{
+					System.out.println("LOGGING INITIALIZATION: Configuring logging from " + f.getAbsolutePath());
+					in = new FileInputStream(f);
+					LogManager.getLogManager().readConfiguration(in);
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+				finally
+				{
+					MiscUtils.close(in);
+				}
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			System.out.println("LOGGING INITIALIZATION: No explicit log configuration found, java.util.logging will use default behaviour");
+		}
+	}
+	
+	
 	public Log create(String section)
 	{
 		return new Bridge(section);

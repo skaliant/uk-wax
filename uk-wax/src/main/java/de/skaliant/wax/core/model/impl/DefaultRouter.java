@@ -3,10 +3,10 @@ package de.skaliant.wax.core.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.skaliant.wax.core.ControllerManager;
 import de.skaliant.wax.core.Router;
 import de.skaliant.wax.core.model.ActionInfo;
 import de.skaliant.wax.core.model.ControllerInfo;
-import de.skaliant.wax.core.model.ControllerManager;
 import de.skaliant.wax.core.model.RouterConfig;
 import de.skaliant.wax.core.model.RouterResult;
 

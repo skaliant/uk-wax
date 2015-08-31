@@ -5,7 +5,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import de.skaliant.wax.core.Dispatcher;
 import de.skaliant.wax.util.logging.Log;
 
 
@@ -29,7 +28,7 @@ import de.skaliant.wax.util.logging.Log;
  */
 public class StatementResolver
 {
-	private final static Log LOG = Log.get(Dispatcher.class);
+	private final Log LOG = Log.get(StatementResolver.class);
 	
 	
 	/**
@@ -43,7 +42,7 @@ public class StatementResolver
 	 * @param vap Provides the value to be assigned
 	 * @throws Exception In case the value may not be set (e.g. wrong type)
 	 */
-	public static void setValueTo(Object bean, String complexStatement, ValueProvider vap)
+	public void setValueTo(Object bean, String complexStatement, ValueProvider vap)
 		throws Exception
 	{
 		if ((bean == null) || (complexStatement == null) || (vap == null))
@@ -114,7 +113,7 @@ public class StatementResolver
 	 * @param atomicStatement Simple statement (e.g. a simple property name), possibly indexed
 	 * @return Instance for accessing the target, or null if not found or not appropriate
 	 */
-	public static StatementTarget find(Object bean, String atomicStatement)
+	public StatementTarget find(Object bean, String atomicStatement)
 	{
 		if (bean == null)
 		{

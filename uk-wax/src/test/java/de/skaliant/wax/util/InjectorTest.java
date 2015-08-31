@@ -28,7 +28,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("intField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42, it.getIntField());
 	}
 
@@ -40,7 +40,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("dateField", "4242424242");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(new Date(4242424242L), it.getDateField());
 	}
 
@@ -52,7 +52,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("dateField", "20150501");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Converter.date(2015, 5, 1), it.getDateField());
 	}
 
@@ -64,7 +64,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("dateField", "2015-05-01");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Converter.date(2015, 5, 1), it.getDateField());
 	}
 
@@ -76,7 +76,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("dateField", "2015/5/1");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Converter.date(2015, 5, 1), it.getDateField());
 	}
 
@@ -88,7 +88,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("dateField", "1.5.2015");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Converter.date(2015, 5, 1), it.getDateField());
 	}
 
@@ -100,7 +100,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("dateField", "01#05#2015");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Converter.date(2015, 5, 1), it.getDateField());
 	}
 
@@ -117,7 +117,7 @@ public class InjectorTest
 		itt.setObjectField(ittt);
 		
 		dpp.addParam("objectField.objectField.intField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42, ittt.getIntField());
 	}
 
@@ -134,7 +134,7 @@ public class InjectorTest
 		itt.setObjectField(ittt);
 		
 		dpp.addParam("objectField.objectFieldX.intField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(0, ittt.getIntField());
 	}
 
@@ -146,7 +146,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("intField", new String[] { "42", "84" });
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42, it.getIntField());
 	}
 
@@ -158,7 +158,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("intField", "42424242424242424242424242");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(0, it.getIntField());
 	}
 
@@ -170,7 +170,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("byteField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42, it.getByteField());
 	}
 
@@ -182,7 +182,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("charField", "4");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals('4', it.getCharField());
 	}
 
@@ -194,7 +194,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("charField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(0, it.getCharField());
 	}
 
@@ -206,7 +206,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("boolField", "true");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(true, it.isBoolField());
 	}
 
@@ -218,7 +218,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("longField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42L, it.getLongField());
 	}
 
@@ -230,7 +230,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("floatField", "4.2");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(4.2F, it.getFloatField());
 	}
 
@@ -242,7 +242,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("doubleField", "4.2");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(4.2D, it.getDoubleField());
 	}
 
@@ -254,7 +254,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("shortField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42, it.getShortField());
 	}
 
@@ -266,7 +266,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("stringField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals("42", it.getStringField());
 	}
 
@@ -278,7 +278,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("bigDecimalField", "4.2");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(new BigDecimal("4.2"), it.getBigDecimalField());
 	}
 
@@ -290,7 +290,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("bigIntegerField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(new BigInteger("42"), it.getBigIntegerField());
 	}
 	
@@ -302,7 +302,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("intArrayField", new String[] { "42", "84", "126" });
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertTrue(Arrays.equals(new int[] { 42, 84, 126 }, it.getIntArrayField()));
 	}
 	
@@ -314,7 +314,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("intArrayField[2]", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(42, it.getIntArrayField()[2]);
 	}
 	
@@ -326,7 +326,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("integerListField", new String[] { "42", "84", "126" });
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Arrays.asList(new Integer(42), new Integer(84), new Integer(126)), it.getIntegerListField());
 	}
 	
@@ -338,7 +338,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("integerListField[2]", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(new Integer(42), it.getIntegerListField().get(2));
 	}
 	
@@ -350,7 +350,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("integerListField[11]", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(12, it.getIntegerListField().size());
 		Assert.assertNull(it.getIntegerListField().get(10));
 		Assert.assertEquals(new Integer(42), it.getIntegerListField().get(11));
@@ -364,7 +364,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("integerSetField", new String[] { "42", "84", "126" });
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(new HashSet<Integer>(Arrays.asList(new Integer(42), new Integer(84), new Integer(126))), it.getIntegerSetField());
 	}
 	
@@ -376,7 +376,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("stringArrayField", new String[] { "42", "84", "126" });
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertTrue(Arrays.equals(new String[] { "42", "84", "126" }, it.getStringArrayField()));
 	}
 	
@@ -388,7 +388,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("stringListField", new String[] { "42", "84", "126" });
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(Arrays.asList("42", "84", "126"), it.getStringListField());
 	}
 	
@@ -400,7 +400,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("objectField", "42");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals("42", it.getObjectField());
 	}
 
@@ -412,7 +412,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("enumField", "TWO");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(InjectionEnum.TWO, it.getEnumField());
 	}
 
@@ -424,7 +424,7 @@ public class InjectorTest
 		InjectionTarget it = new InjectionTarget();
 		
 		dpp.addParam("enumField", "tWo");
-		Injector.injectBeanProperties(it, dpp, null);
+		new Injector().injectBeanProperties(it, dpp, null);
 		Assert.assertEquals(InjectionEnum.TWO, it.getEnumField());
 	}
 }

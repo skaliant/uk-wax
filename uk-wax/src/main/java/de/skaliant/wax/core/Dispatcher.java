@@ -33,7 +33,9 @@ import de.skaliant.wax.util.logging.Log;
  */
 public class Dispatcher
 {
-	private final static Log LOG = Log.get(Dispatcher.class);
+	private final Log LOG = Log.get(Dispatcher.class);
+	private UploadInjector uploadInjector = new UploadInjector();
+	private Injector injector = new Injector();
 	/**
 	 * Information on this dispatcher
 	 */
@@ -158,6 +160,7 @@ public class Dispatcher
 			 */
 			List<?> spex = Arrays.asList(call.getApplicationScope().getSource(), call.getRequestScope().getSource(), call.getResponse(),
 					info.findConfig(call));
+			
 			/*
 			 * 2.) Check for an upload; in this case, we need to handle parameters a different way and inject uploaded blobs
 			 */
@@ -165,17 +168,17 @@ public class Dispatcher
 			{
 				mup = MultipartParser.create(call.getContentType(), call.getRequest().getInputStream());
 				params = MapBasedParameterProvider.create(call, mup, "utf-8"); // TOOD make encoding configurable
-				UploadInjector.injectUploads(ctrl, mup);
+				uploadInjector.injectUploads(ctrl, mup);
 			}
 			/*
 			 * 3.) Inject parameters and magic values to bean properties
 			 */
-			Injector.injectBeanProperties(ctrl, params, spex);
+			injector.injectBeanProperties(ctrl, params, spex);
 			/*
 			 * 4.) Inject parameters, magic values, and path information into method
 			 * arguments
 			 */
-			args = Injector.injectMethodArguments(call.getAction().getMethod(), params, call.getPathInfoParts(), spex);
+			args = injector.injectMethodArguments(call.getAction().getMethod(), params, call.getPathInfoParts(), spex);
 			/*
 			 * 5.) Init method(s)
 			 */

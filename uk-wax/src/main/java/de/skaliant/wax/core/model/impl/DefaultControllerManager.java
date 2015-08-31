@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.skaliant.wax.core.ControllerManager;
 import de.skaliant.wax.core.model.ControllerInfo;
 import de.skaliant.wax.core.model.ControllerInspector;
-import de.skaliant.wax.core.model.ControllerManager;
 import de.skaliant.wax.core.model.ControllerManagerConfig;
 import de.skaliant.wax.core.model.ResolutionMode;
 import de.skaliant.wax.util.MiscUtils;
@@ -25,10 +25,10 @@ import de.skaliant.wax.util.logging.Log;
 public class DefaultControllerManager
 	implements ControllerManager
 {
-	private final static Log LOG = Log.get(DefaultControllerManager.class);
 	private final static ControllerInfo DUMMY = new ControllerInfo();
 	private final static String INDEX_CONTROLLER_NAME = "index";
 	private final static String CONTROLLER_SUFFIX = "Controller";
+	private final Log LOG = Log.get(DefaultControllerManager.class);
 
 	private ControllerManagerConfig config = new ControllerManagerConfig();
 	private Map<String, ControllerInfo> ctrlMap = new HashMap<String, ControllerInfo>();
@@ -79,7 +79,7 @@ public class DefaultControllerManager
 				cls = seek(n, packageNames);
 				if (cls != null)
 				{
-					ci = ControllerInspector.inspect(cls, config.getMode());
+					ci = new ControllerInspector().inspect(cls, config.getMode());
 					if (ci != null)
 					{
 						add(ci);
@@ -121,7 +121,7 @@ public class DefaultControllerManager
 		}
 		if ((hit == null) && (config.getMode() == ResolutionMode.DYNAMIC))
 		{
-			hit = ControllerInspector.inspect(type, config.getMode());
+			hit = new ControllerInspector().inspect(type, config.getMode());
 			if (hit != null)
 			{
 				add(hit);
@@ -174,7 +174,7 @@ public class DefaultControllerManager
 			{
 				if (usable(cls))
 				{
-					ControllerInfo ci = ControllerInspector.inspect(cls, config.getMode());
+					ControllerInfo ci = new ControllerInspector().inspect(cls, config.getMode());
 
 					if (ci != null)
 					{
@@ -245,7 +245,7 @@ public class DefaultControllerManager
 	}
 
 
-	private static Class<?> seek(String name, Collection<String> packages)
+	private Class<?> seek(String name, Collection<String> packages)
 	{
 		Class<?> cls = null;
 		/*
@@ -274,7 +274,7 @@ public class DefaultControllerManager
 	}
 
 
-	private static Class<?> seek(String name)
+	private Class<?> seek(String name)
 	{
 		Class<?> cls = null;
 

@@ -14,7 +14,8 @@ import de.skaliant.wax.util.logging.Log;
 
 
 /**
- * 
+ * A class responsible for analyzing controller classes and collecting all information
+ * found into an instance of <code>ControllerInfo</code>.
  *
  * @author Udo Kastilan
  */
@@ -23,10 +24,18 @@ public class ControllerInspector
 	private final static String CONTROLLER_SUFFIX = "Controller";
 	private final static String ACTION_SUFFIX = "Action";
 	private final static String DEFAULT_ACTION_NAME = "index";
-	private final static Log LOG = Log.get(ControllerInspector.class);
+	
+	private final Log LOG = Log.get(ControllerInspector.class);
 
 	
-	public static ControllerInfo inspect(Class<?> cls, ResolutionMode mode)
+	/**
+	 * Interpret the given class as a controller and analyze it using the specified working mode.
+	 * 
+	 * @param cls Controller class
+	 * @param mode Working mode
+	 * @return Found information, or null if it may not be a controller (depending on the working mode)
+	 */
+	public ControllerInfo inspect(Class<?> cls, ResolutionMode mode)
 	{
 		List<ActionInfo> aix = new ArrayList<ActionInfo>();
 		Controller anno = cls.getAnnotation(Controller.class);
@@ -147,7 +156,15 @@ public class ControllerInspector
 	}
 
 
-	public static ActionInfo inspect(Method meth, ResolutionMode mode)
+	/**
+	 * Interpret the given method as a controller action, analyze it using the specified working
+	 * mode, and return all information found as an instance of ActionInfo.
+	 * 
+	 * @param meth Action method
+	 * @param mode Working mode
+	 * @return Information found, or null if it may not be an action method (depending on the working mode) 
+	 */
+	public ActionInfo inspect(Method meth, ResolutionMode mode)
 	{
 		Action anno = meth.getAnnotation(Action.class);
 		ActionInfo info = new ActionInfo();

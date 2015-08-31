@@ -1,4 +1,8 @@
-package de.skaliant.wax.core.model;
+package de.skaliant.wax.core;
+
+import de.skaliant.wax.core.model.Configurable;
+import de.skaliant.wax.core.model.ControllerInfo;
+import de.skaliant.wax.core.model.ControllerManagerConfig;
 
 
 
@@ -9,6 +13,7 @@ package de.skaliant.wax.core.model;
  * @author Udo Kastilan
  */
 public interface ControllerManager
+	extends Configurable<ControllerManagerConfig>
 {
 	/**
 	 * Get a config bean filled with default values. The Bootstrapper will try to apply init parameters

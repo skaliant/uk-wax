@@ -2,7 +2,7 @@ package de.skaliant.wax.core;
 
 import java.util.List;
 
-import de.skaliant.wax.core.model.ControllerManager;
+import de.skaliant.wax.core.model.Configurable;
 import de.skaliant.wax.core.model.RouterConfig;
 import de.skaliant.wax.core.model.RouterResult;
 
@@ -14,6 +14,7 @@ import de.skaliant.wax.core.model.RouterResult;
  * @author Udo Kastilan
  */
 public interface Router
+	extends Configurable<RouterConfig>
 {
 	/**
 	 * Provide a configuration bean pre-filled with default values. The bootstrapper will

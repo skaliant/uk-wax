@@ -7,6 +7,10 @@
 	<name>Wax</name>
 	<description>Web Actions Framework</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>

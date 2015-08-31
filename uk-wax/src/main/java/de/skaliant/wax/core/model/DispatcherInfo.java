@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.skaliant.wax.core.ControllerManager;
+import de.skaliant.wax.core.Environment;
 import de.skaliant.wax.core.Router;
 import de.skaliant.wax.core.ViewEngine;
 import de.skaliant.wax.util.Config;
@@ -20,16 +22,16 @@ import de.skaliant.wax.util.logging.Log;
  */
 public class DispatcherInfo
 {
-	private final static Log LOG = Log.get(DispatcherInfo.class);
 	private final static long CONF_CHECK_SPAN = 60000;
+	private final Log LOG = Log.get(DispatcherInfo.class);
 
-	private Map<String, ConfigEntry> confPerHost = new HashMap<String, ConfigEntry>(3);
+	private Map<String, ConfigEntry> confPerHint = new HashMap<String, ConfigEntry>(3);
 	private ControllerManager resolver = null;
 	private ViewEngine viewEngine = null;
 	private Router router = null;
 	private String id = null;
 
-
+	
 	public ViewEngine getViewEngine()
 	{
 		return viewEngine;
@@ -80,16 +82,20 @@ public class DispatcherInfo
 
 	public Config findConfig(Call ctx)
 	{
-		String host = ctx.getHost();
+		String hint = Environment.getInstance().getHint();
 		ConfigEntry ce = null;
 
-		ce = confPerHost.get(host);
+		if (hint == null)
+		{
+			hint = "dev";
+		}
+		ce = confPerHint.get(hint);
 		if ((ce == null)
 				|| ((System.currentTimeMillis() - ce.checked) > CONF_CHECK_SPAN))
 		{
 			File f = null;
 
-			f = new File(ctx.getRealPath("/WEB-INF/config." + host + ".xml"));
+			f = new File(ctx.getRealPath("/WEB-INF/config-" + hint + ".xml"));
 			if (!f.isFile())
 			{
 				f = new File(ctx.getRealPath("/WEB-INF/config.xml"));
@@ -99,15 +105,14 @@ public class DispatcherInfo
 				try
 				{
 					ce = new ConfigEntry();
-					LOG.info("Loading config file \"" + f.getAbsolutePath() + "\" ...");
+					LOG.info("Loading config file \"" + f.getAbsolutePath() + '"');
 					ce.conf = Config.load(f);
 					ce.timestamp = f.lastModified();
-					confPerHost.put(host, ce);
+					confPerHint.put(hint, ce);
 				}
 				catch (Exception ex)
 				{
-					LOG.error("Cannot load config file \"" + f.getAbsolutePath() + "\"",
-							ex);
+					LOG.error("Cannot load config file \"" + f.getAbsolutePath() + '"', ex);
 					return new Config();
 				}
 			}

@@ -1,6 +1,12 @@
 package de.skaliant.wax.util.logging;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
+
+import de.skaliant.wax.core.Environment;
 
 
 /**
@@ -11,6 +17,43 @@ import org.apache.log4j.Logger;
 public class Log4JAdapter
 	implements Log.Provider
 {
+	public void init(File configFolder)
+	{
+		String env = Environment.getInstance().getHint();
+		String[] test = {
+			"log4j-" + env + ".properties",
+			"log4j-" + env + ".xml",
+			"log4j.properties",
+			"log4j.xml"
+		};
+		boolean found = false;
+		
+		for (String s : test)
+		{
+			File f = new File(configFolder, s);
+			
+			if (f.exists())
+			{
+				System.out.println("Configuring logging from " + f.getAbsolutePath());
+				if (f.getName().endsWith(".xml"))
+				{
+					DOMConfigurator.configure(f.getAbsolutePath());
+				}
+				else
+				{
+					PropertyConfigurator.configure(f.getAbsolutePath());
+				}
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			System.out.println("No explicit log configuration found; please use log4j default schematics for configuration (e.g. a log4j.properties in the class path)");
+		}
+	}
+	
+	
 	public Log create(String section)
 	{
 		return new Bridge(section);

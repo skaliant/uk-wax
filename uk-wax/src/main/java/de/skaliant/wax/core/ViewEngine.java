@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import de.skaliant.wax.core.model.Call;
+import de.skaliant.wax.core.model.Configurable;
 import de.skaliant.wax.core.model.ViewEngineConfig;
 
 
@@ -20,6 +21,7 @@ import de.skaliant.wax.core.model.ViewEngineConfig;
  * @author Udo Kastilan
  */
 public interface ViewEngine
+	extends Configurable<ViewEngineConfig>
 {
 	/**
 	 * Get the configuration object.
