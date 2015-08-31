@@ -40,6 +40,51 @@ public class TypeUtils
 		return types;
 	}
 
+	
+	public static Class<?> getWrapperFor(Type type)
+	{
+		Class<?> wrapper = null;
+		
+		if (isPrimitive(type))
+		{
+			Class<?> prim = rawType(type);
+			
+			if (prim == Boolean.TYPE)
+			{
+				wrapper = Boolean.class;
+			}
+			else if (prim == Byte.TYPE)
+			{
+				wrapper = Byte.class;
+			}
+			else if (prim == Short.TYPE)
+			{
+				wrapper = Short.class;
+			}
+			else if (prim == Character.TYPE)
+			{
+				wrapper = Character.class;
+			}
+			else if (prim == Integer.TYPE)
+			{
+				wrapper = Integer.class;
+			}
+			else if (prim == Long.TYPE)
+			{
+				wrapper = Long.class;
+			}
+			else if (prim == Float.TYPE)
+			{
+				wrapper = Float.class;
+			}
+			else if (prim == Double.TYPE)
+			{
+				wrapper = Double.class;
+			}
+		}
+		return wrapper;
+	}
+	
 
 	public static boolean isPrimitive(Type type)
 	{
