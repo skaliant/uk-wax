@@ -75,7 +75,7 @@ public abstract class Result
 	
 
 	/**
-	 * Redirect to an action of the controller referenced by its class. As in Java there is no such thing as
+	 * Redirect to an action of the controller referenced by its class. As in Java before version 8 there is no such thing as
 	 * a method reference, the action must be referenced by its method name as written in source code, not the 
 	 * action name given by annotation. Further information can be configured on the RedirectBuilder instance 
 	 * returned.

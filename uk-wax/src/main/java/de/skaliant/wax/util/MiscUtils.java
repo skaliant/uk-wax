@@ -2,6 +2,7 @@ package de.skaliant.wax.util;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +61,28 @@ public class MiscUtils
 			set.add(t);
 		}
 		return set;
+	}
+	
+	
+	public static <T> T first(Collection<T> coll)
+	{
+		for (T t : coll)
+		{
+			return t;
+		}
+		return null;
+	}
+	
+	
+	public static <T> T last(Collection<T> coll)
+	{
+		T last = null;
+		
+		for (T t : coll)
+		{
+			last = t;
+		}
+		return last;
 	}
 	
 	

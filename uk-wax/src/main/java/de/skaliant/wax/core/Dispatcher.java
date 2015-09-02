@@ -22,7 +22,6 @@ import de.skaliant.wax.core.model.impl.DefaultCall;
 import de.skaliant.wax.results.Result;
 import de.skaliant.wax.upload.MultipartParser;
 import de.skaliant.wax.util.Injector;
-import de.skaliant.wax.util.MiscUtils;
 import de.skaliant.wax.util.logging.Log;
 
 
@@ -51,6 +50,17 @@ public class Dispatcher
 	{
 		this.info = info;
 	}
+	
+	
+	/**
+	 * Returns the info object.
+	 * 
+	 * @return
+	 */
+	public DispatcherInfo getInfo()
+	{
+		return info;
+	}
 
 
 	/**
@@ -62,19 +72,20 @@ public class Dispatcher
 	 * @param app ServletContext (application scope)
 	 * @param req Request
 	 * @param resp Response
+	 * @param dispatcherPath The URI path which triggered the dispatcher
 	 * @param path Extra path information (any rest after whatever has triggered the servlet/filter)
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void handle(ServletContext app, HttpServletRequest req, HttpServletResponse resp, String path)
+	public void handle(ServletContext app, HttpServletRequest req, HttpServletResponse resp, String dispatcherPath, String pathInfo)
 		throws ServletException, IOException
 	{
-		RouterResult rr = info.getRouter().route(info.getControllerManager(), MiscUtils.split(path, '/'));
+		RouterResult rr = info.getRouter().route(info, dispatcherPath, pathInfo);
 
 		if (rr == null)
 		{
 			// Nothing found, not even the default controller? 404!
-			LOG.info("Path [" + req.getPathInfo() + "]: no controller found, sending 404");
+			LOG.info("Path [" + req.getRequestURI() + "]: no controller found, sending 404");
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		else
@@ -83,7 +94,7 @@ public class Dispatcher
 			/*
 			 * Combine remaining path parts and handle action
 			 */
-			LOG.info("Path [" + req.getPathInfo() + "]: will be handled by controller [" + rr.getController().getName() + "], action ["
+			LOG.info("Path [" + req.getRequestURI() + "]: will be handled by controller [" + rr.getController().getName() + "], action ["
 					+ rr.getAction().getName() + "] - " + rr.getController().getType().getName() + ":" + rr.getAction().getMethod().getName()
 					+ "(); path info is " + rr.getPathInfo());
 			try

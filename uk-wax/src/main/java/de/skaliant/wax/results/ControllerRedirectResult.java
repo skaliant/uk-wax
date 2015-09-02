@@ -68,11 +68,8 @@ class ControllerRedirectResult
 				url.setPort(ub.getPort());
 			}
 		}
-		url.appendPath(call.getContextPath()).appendPath(disp.getId()).appendPath(ci.getName());
-		if ((ai != null) && (!ai.isDefaultAction()))
-		{
-			url.appendPath(ai.getName());
-		}
+		
+		url.appendPath(call.getContextPath()).appendPath(disp.getRouter().createPath(disp, ci, ai));
 		url.appendPath(ub.getPath());
 		url.setQueryString(ub.getQueryString());
 		url.setAnchor(ub.getAnchor());

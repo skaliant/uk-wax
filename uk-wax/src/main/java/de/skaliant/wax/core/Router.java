@@ -1,8 +1,9 @@
 package de.skaliant.wax.core;
 
-import java.util.List;
-
+import de.skaliant.wax.core.model.ActionInfo;
 import de.skaliant.wax.core.model.Configurable;
+import de.skaliant.wax.core.model.ControllerInfo;
+import de.skaliant.wax.core.model.DispatcherInfo;
 import de.skaliant.wax.core.model.RouterConfig;
 import de.skaliant.wax.core.model.RouterResult;
 
@@ -25,14 +26,24 @@ public interface Router
 	RouterConfig getConfig();
 	
 	/**
-	 * Analyze the given path info split at "/" into parts, and return an object
-	 * containing a) the controller, b) the action, c) what path parts have been
-	 * used to find these two, and d) the rest of the path info not used for 
-	 * resolving.
+	 * Analyze the given call data and return an object containing a) the controller, 
+	 * b) the action, c) what path parts have been used to find these two, and d) the rest 
+	 * of the path info not used for resolving.
 	 * 
-	 * @param ctrlMan ControllerManager
-	 * @param path Path info parts
+	 * @param disp Info on the dispatcher handling the request
+	 * @param dispatcherPath The path which has triggered the dispatcher
+	 * @param pathInfo The additional path after the dispatcher path
 	 * @return RouterResult instance
 	 */
-	RouterResult route(ControllerManager ctrlMan, List<String> path);
+	RouterResult route(DispatcherInfo disp, String dispatcherPath, String pathInfo);
+	
+	
+	/**
+	 * 
+	 * @param disp
+	 * @param controller
+	 * @param action
+	 * @return
+	 */
+	String createPath(DispatcherInfo disp, ControllerInfo controller, ActionInfo action);
 }

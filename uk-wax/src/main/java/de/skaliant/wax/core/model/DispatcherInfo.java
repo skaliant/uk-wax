@@ -29,7 +29,7 @@ public class DispatcherInfo
 	private ControllerManager resolver = null;
 	private ViewEngine viewEngine = null;
 	private Router router = null;
-	private String id = null;
+	private String pattern = null;
 
 	
 	public ViewEngine getViewEngine()
@@ -68,15 +68,21 @@ public class DispatcherInfo
 	}
 
 
-	public String getId()
+	public String getPattern()
 	{
-		return id;
+		return pattern;
 	}
 
 
-	public void setId(String id)
+	public void setPattern(String pattern)
 	{
-		this.id = id;
+		this.pattern = pattern;
+	}
+	
+	
+	public boolean isSuffixPattern()
+	{
+		return (pattern != null) && pattern.matches("^[*][.].+$");
 	}
 
 

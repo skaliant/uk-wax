@@ -67,7 +67,7 @@ public class Bootstrapper
 		/*
 		 * Try to find the servlet mapping's url pattern as identifier
 		 */
-		disp.setId(id(findUrlMapping(app, conf)));
+		disp.setPattern(findUrlMapping(app, conf));
 		/*
 		 * Final step: register dispatcher
 		 */
@@ -89,15 +89,6 @@ public class Bootstrapper
 		}
 		new Injector().injectBeanProperties(c.getConfig(), new MappedParams(map));
 		return c;
-	}
-	
-	
-	private static String id(String servletMapping)
-	{
-		/*
-		 * TODO: more intelligent url pattern handling, create id independently of the pattern
-		 */
-		return servletMapping.replace("*", "");
 	}
 	
 	

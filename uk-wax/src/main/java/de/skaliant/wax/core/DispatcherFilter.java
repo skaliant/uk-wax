@@ -42,11 +42,27 @@ public class DispatcherFilter
 	{
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
+		String servletPath = req.getServletPath();
+		String pathInfo = req.getPathInfo();
 		
-		dispatcher.handle(filterConfig.getServletContext(), req, resp, req.getServletPath());
 		/*
-		 * TODO pass through non-handled calls
+		 * For Filters, servlet path and path info seem to be handled in a different way compared to Servlets.
+		 * For instance, if the URL mapping is "/de/*", a path like "/de/more/path" is interpreted for a Servlet
+		 * as servlet path "/de" and path info "/more/path", whereas the Filter gets "/de/more/path" as servlet
+		 * path and null as the path info. The following lines try to normalize this behaviour.
 		 */
+		if (!dispatcher.getInfo().isSuffixPattern())
+		{
+			String mappedPath = dispatcher.getInfo().getPattern().replace("*", "");
+			
+			if ((mappedPath.length() > 1) && mappedPath.endsWith("/"))
+			{
+				mappedPath = mappedPath.substring(0, mappedPath.length() - 1);
+			}
+			pathInfo = servletPath.substring(mappedPath.length());
+			servletPath = mappedPath;
+		}
+		dispatcher.handle(filterConfig.getServletContext(), req, resp, servletPath, pathInfo);
 	}
 
 	

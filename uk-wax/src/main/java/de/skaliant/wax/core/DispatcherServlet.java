@@ -44,6 +44,6 @@ public class DispatcherServlet
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException
 	{
-		dispatcher.handle(getServletContext(), req, resp, req.getPathInfo());
+		dispatcher.handle(getServletContext(), req, resp, req.getServletPath(), req.getPathInfo());
 	}
 }

@@ -30,13 +30,13 @@ public class WaxCore
 	 */
 	public void register(DispatcherInfo di)
 	{
-		if (dispatchers.containsKey(di.getId()))
+		if (dispatchers.containsKey(di.getPattern()))
 		{
-			LOG.warn("Dispatcher \"" + di.getId() + "\" already registered, ignoring call");
+			LOG.warn("Dispatcher for pattern \"" + di.getPattern() + "\" already registered, ignoring call");
 			return;
 		}
-		LOG.info("Registering dispatcher \"" + di.getId() + "\"");
-		dispatchers.put(di.getId(), di);
+		LOG.info("Registering dispatcher for pattern \"" + di.getPattern() + "\"");
+		dispatchers.put(di.getPattern(), di);
 	}
 	
 	
