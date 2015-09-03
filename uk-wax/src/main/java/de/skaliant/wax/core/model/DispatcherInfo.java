@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.skaliant.wax.app.Config;
 import de.skaliant.wax.core.ControllerManager;
 import de.skaliant.wax.core.Environment;
 import de.skaliant.wax.core.Router;
 import de.skaliant.wax.core.ViewEngine;
-import de.skaliant.wax.util.Config;
 import de.skaliant.wax.util.logging.Log;
 
 
@@ -91,10 +91,6 @@ public class DispatcherInfo
 		String hint = Environment.getInstance().getHint();
 		ConfigEntry ce = null;
 
-		if (hint == null)
-		{
-			hint = "dev";
-		}
 		ce = confPerHint.get(hint);
 		if ((ce == null)
 				|| ((System.currentTimeMillis() - ce.checked) > CONF_CHECK_SPAN))

@@ -1,4 +1,4 @@
-package de.skaliant.wax.util;
+package de.skaliant.wax.app;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -9,6 +9,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import de.skaliant.wax.app.Config;
 
 
 /**

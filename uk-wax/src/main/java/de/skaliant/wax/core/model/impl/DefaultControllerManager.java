@@ -63,8 +63,7 @@ public class DefaultControllerManager
 			String[] tryThese =
 			{
 					MiscUtils.firstLetterCase(name) + CONTROLLER_SUFFIX,
-					MiscUtils.firstLetterCase(name),
-					name
+					MiscUtils.firstLetterCase(name)
 			};
 			Class<?> cls = null;
 			String prev = "";

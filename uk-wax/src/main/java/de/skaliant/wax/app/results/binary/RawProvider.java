@@ -1,4 +1,4 @@
-package de.skaliant.wax.results.binary;
+package de.skaliant.wax.app.results.binary;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

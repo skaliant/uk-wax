@@ -1,4 +1,4 @@
-package de.skaliant.wax.results;
+package de.skaliant.wax.app.results;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,8 +6,8 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import de.skaliant.wax.app.results.binary.StreamProvider;
 import de.skaliant.wax.core.model.Call;
-import de.skaliant.wax.results.binary.StreamProvider;
 import de.skaliant.wax.util.MiscUtils;
 
 

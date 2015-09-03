@@ -1,7 +1,7 @@
 package de.skaliant.wax.app;
 
+import de.skaliant.wax.app.results.Result;
 import de.skaliant.wax.core.model.Call;
-import de.skaliant.wax.results.Result;
 
 
 /**

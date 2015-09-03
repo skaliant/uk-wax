@@ -1,4 +1,4 @@
-package de.skaliant.wax.util;
+package de.skaliant.wax.app;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -17,6 +17,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import de.skaliant.wax.util.MiscUtils;
 
 
 /**

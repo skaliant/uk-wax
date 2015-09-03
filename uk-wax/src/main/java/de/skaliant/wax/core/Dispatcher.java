@@ -2,7 +2,7 @@ package de.skaliant.wax.core;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -10,7 +10,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.skaliant.wax.app.Config;
 import de.skaliant.wax.app.Guardian;
+import de.skaliant.wax.app.results.Result;
 import de.skaliant.wax.core.model.Call;
 import de.skaliant.wax.core.model.DispatcherInfo;
 import de.skaliant.wax.core.model.MapBasedParameterProvider;
@@ -19,9 +21,9 @@ import de.skaliant.wax.core.model.RequestAttributeRedirectStore;
 import de.skaliant.wax.core.model.RouterResult;
 import de.skaliant.wax.core.model.UploadInjector;
 import de.skaliant.wax.core.model.impl.DefaultCall;
-import de.skaliant.wax.results.Result;
 import de.skaliant.wax.upload.MultipartParser;
 import de.skaliant.wax.util.Injector;
+import de.skaliant.wax.util.Pair;
 import de.skaliant.wax.util.logging.Log;
 
 
@@ -169,9 +171,12 @@ public class Dispatcher
 			 * (ServletContext), and Config; also: set path info elements and
 			 * parameters
 			 */
-			List<?> spex = Arrays.asList(call.getApplicationScope().getSource(), call.getRequestScope().getSource(), call.getResponse(),
-					info.findConfig(call));
+			List<Pair<Class<?>, ?>> spex = new ArrayList<Pair<Class<?>, ?>>(); 
 			
+			spex.add(new Pair<Class<?>, Object>(ServletContext.class, call.getApplicationScope().getSource()));
+			spex.add(new Pair<Class<?>, Object>(HttpServletRequest.class, call.getRequestScope().getSource()));
+			spex.add(new Pair<Class<?>, Object>(HttpServletResponse.class, call.getResponse()));
+			spex.add(new Pair<Class<?>, Object>(Config.class, info.findConfig(call)));
 			/*
 			 * 2.) Check for an upload; in this case, we need to handle parameters a different way and inject uploaded blobs
 			 */

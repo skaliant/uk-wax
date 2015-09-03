@@ -1,4 +1,4 @@
-package de.skaliant.wax.results;
+package de.skaliant.wax.app.results;
 
 import java.io.IOException;
 

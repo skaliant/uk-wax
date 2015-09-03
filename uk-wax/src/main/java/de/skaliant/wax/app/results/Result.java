@@ -1,13 +1,13 @@
-package de.skaliant.wax.results;
+package de.skaliant.wax.app.results;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import de.skaliant.wax.app.results.binary.FileProvider;
+import de.skaliant.wax.app.results.binary.RawProvider;
 import de.skaliant.wax.core.model.Call;
-import de.skaliant.wax.results.binary.FileProvider;
-import de.skaliant.wax.results.binary.RawProvider;
 
 
 

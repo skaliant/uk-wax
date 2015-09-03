@@ -41,7 +41,7 @@ public class Injector
 	 * @param byName Named parameters
 	 * @param byType Special objects to be injected by their class type
 	 */
-	public void injectBeanProperties(Object instance, ParameterProvider byName, List<?> byType)
+	public void injectBeanProperties(Object instance, ParameterProvider byName, List<Pair<Class<?>, ?>> byType)
 	{
 		ParameterValueProvider pvp = new ParameterValueProvider();
 		Bean<?> bean = Bean.wrap(instance);
@@ -55,11 +55,11 @@ public class Injector
 			{
 				for (PropertyDescriptor pd : bean.getProperties(Bean.Accessibility.WRITEABLE))
 				{
-					for (Object special : byType)
+					for (Pair<Class<?>, ?> special : byType)
 					{
-						if (pd.getPropertyType().isAssignableFrom(special.getClass()))
+						if (pd.getPropertyType().isAssignableFrom(special.getFirst()))
 						{
-							pd.getWriteMethod().invoke(instance, special);
+							pd.getWriteMethod().invoke(instance, special.getSecond());
 							break;
 						}
 					}
@@ -97,7 +97,7 @@ public class Injector
 	 * @param byType Parameters to be injected by their class type
 	 * @return Method argument array
 	 */
-	public Object[] injectMethodArguments(Method method, ParameterProvider byName, List<String> pathInfoParts, List<?> byType)
+	public Object[] injectMethodArguments(Method method, ParameterProvider byName, List<String> pathInfoParts, List<Pair<Class<?>, ?>> byType)
 	{
 		Type[] paramTypes = method.getGenericParameterTypes();
 		Object[] args = new Object[paramTypes.length];
@@ -148,11 +148,11 @@ public class Injector
 					/*
 					 * ... try to assign special objects by type
 					 */
-					for (Object special : byType)
+					for (Pair<Class<?>, ?> special : byType)
 					{
-						if ((paramTypes[i] instanceof Class) && ((Class<?>) paramTypes[i]).isAssignableFrom(special.getClass()))
+						if ((paramTypes[i] instanceof Class) && ((Class<?>) paramTypes[i]).isAssignableFrom(special.getFirst()))
 						{
-							args[i] = special;
+							args[i] = special.getSecond();
 							done = true;
 							break;
 						}

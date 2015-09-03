@@ -4,7 +4,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.skaliant.wax.util.Config;
 import de.skaliant.wax.util.logging.Log;
 
 
