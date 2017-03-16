@@ -1,0 +1,227 @@
+What is it?
+
+An action-oriented MVC web framework for Java (actually only the "C" part of "MVC"). Know Struts, RoR, Spring Web MVC, or ASP.net MVC? Then give it a shot.
+
+
+What makes it different?
+
+- It's small. The current build artifact takes less than 200 kilobytes.
+- It's independent. Yup, Maven but no dependencies. Not even apache commons or log4j.
+- It doesn't force its types down your throat (keywords: invasiveness). Well, as few as possible ... The rest is POJOs, reflection, and conventions.
+- Easy to use, quick to get started. Minimum task is to add a certain Servlet or Filter to your web.xml, add a few initialisation parameters, and you're good to go.
+- Leaning towards development processes learned in real life projects from simple landing pages up to complex customer portals.
+- It's not component-oriented. Most recent Java web frameworks seem to be focussed on enabling Swing developers to create web applications instead; may work for some, never worked for me.
+- It doesn't make use of modern Java features. Why is that good? I found that many conservative companies tend to have slow update cycles. Even in 2015, there are still many teams out there stuck with Java 5 (if they're lucky) and probably old servlet engines. Currently, my framework depends on Java 5 and Servlet 2.4/JSP 2.0 (that's a Tomcat 5). Don't get me wrong, I'd love to use features of Java 6, 7, or 8 ... I just can hold myself together.
+
+
+How does it work?
+
+It's a MVC framework, bringing only the C (controller) part. The M (the model) is all up to you; it's your business code, do what you want. Persistence is up to you as well; some don't need it, and it's hard to find a compromise for implementing it usable for everyone. The V part is only losely connected by using the abstract concept of a view engine. Currently, there is only one implementation available, and that's plain old JSP(X). I recommend to use the XML variant (it's default anyway), and just use JSTL and EL, no scripting. The core of wax is a dispatcher. This is the class that will take the request, analyze it, and -- with the help of a few other core components -- decide which code will actually have to handle the request. The dispatcher comes in two flavors: a Servlet and a Filter. Use whichever you like best, they do the same job. Configuring the dispatcher in the web.xml is actually the only thing absolutely necessary to make use of the framework.
+
+The class to actually handle a request is called a controller. It's a plain bean with some action methods. These action methods need to be public, and they should return something (a result) to let the dispatcher know what to send back to the client. There are several possible results, for instance a redirect, the name of a view, an HTTP error code, a download, a piece of JSON. As the controller is a bean, you can add properties (setter methods are sufficient), so the dispatcher will try to inject client data (HTTP GET and POST parameters) into these properties according to specific rules and type conventions. On each request, a new instance of the controller bean is created, and once the request is done, it's discarded again. If you need state, use the application or session scope or use JPA.
+
+This is pretty much it.
+
+
+How do I get started?
+
+Configure either the dispatcher servlet or filter in your web.xml, assign a url mapping, and give a few minimum arguments. Here's an example:
+
+  <servlet>
+    <servlet-name>disp</servlet-name>
+    <servlet-class>de.skaliant.wax.core.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>controller.packages</param-name>
+      <param-value>de.skaliant.waxtest.ctrl</param-value>
+    </init-param>
+    <init-param>
+      <param-name>controller.classes</param-name>
+      <param-value>IndexController,AccountController</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>disp</servlet-name>
+    <url-pattern>/de/*</url-pattern>
+  </servlet-mapping>
+
+This assigns the dispatcher servlet to any path below "/de/" after the context path, and puts it into default resolution mode (explicit), that's why we have to explicitly name the controller classes (parameter "controller.classes"). It's a list separated by whitespace (including line wrapping), comma, or semicolon. We could give fully qualified class names, but as soon as you have more than one controller, this task gets tedious. Much easier is to give the name of the package(s) where the controllers are situated using the parameter "controller.packages", and just list simple class names.
+
+On initialisation phase, these classes will be inspected for more information, especially for a list of action methods. You can support/influence this inspection by using a few annotations on your controller classes and methods.
+
+So assuming you deploy your web application as "app.war" on a servlet engine with domain localhost and port 8080, the URL "http://localhost:8080/app/de/" should invoke the default action of the default controller.
+
+
+How does the dispatcher know a controller?
+
+The absolute minimum information the dispatcher needs is a package name. Secondly, there are several resolution modes, depending on your personal taste and security requirements:
+
+- Dynamic mode; a package name is all that is needed. On each request, the framework will search through the controllers it already knows and, if it fails to find a match, tries to resolve a new one through reflection based on the name requested. For instance, if a package named "com.company.ctrl" is given and the requested name is "overview", it will look for classes named (in this order) "com.company.ctrl.OverviewController", or "com.company.ctrl.Overview". If no matching controller is found, it will fallback to a default controller. This is either a known controller class having a certain annotation, or (in dynamic mode) a class named "com.company.ctrl.IndexController" or "com.company.ctrl.Index".
+
+- Explicit; the class names of the controllers need to be configured. If a package name is given, too, all combinations of the package and class names are searched. This way, you can give a package name and simple class names only (instead of fully qualified names). This is the default mode.
+
+- Strict; goes beyond explicit mode by only accepting classes and action methods bearing certain annotations. This is the most secure setting, you can use it to limit access to those classes and methods you intend to be called from outside. This is also the most invasive mode, as you are forced to use a few annotations declared by me.
+
+The mode can be changed by adding the init parameter "controller.mode" to the dispatcher in web.xml with a value of either "explicit", "strict", or "dynamic".
+
+
+How does the dispatcher match a request to a controller?
+
+It asks another class, namely the Router. The default implementation works on the path info. Typically, a Java web application call looks like this:
+
+	scheme://domain/context-path/pattern-path/path-info/path-info/path-info
+
+- The "context-path" is only available for applications not deployed as the ROOT application
+- The "pattern-path" is the url part triggering the dispatcher. For instance, I like to configure the dispatcher Servlet using the url pattern "/de/*" so it looks like it's just a localization sub-path.
+- Anything else in the path after the url pattern is considered a path info
+
+The default Router takes the first two path info parts and tries to match it to a controller and an action name. The controller name is either given by annotation or, if missing, derived from the class name subtracting any "Controller" suffix (e.g. the "MainController" will be named "main"). The names are always treated all lower case. The action name, also, is either given explicitly via annotation, or it is derived from the method name itself subtracting any "Action" suffix (e.g. the "listAction" method is named "list").
+
+
+Give an example what a controller looks like?
+
+public class IndexController
+{
+	public String index()
+	{
+		return "index";
+	}
+}
+
+This is a very simple controller that works for "dynamic" mode. It will be found as default controller by its class name, and the method "index" will be considered the default action by its name, too.
+
+For the "strict" mode, this controller will need to look like this in order to achieve the same:
+
+@Default
+@Controller
+public class IndexController
+{
+	@Default
+	@Action
+	public String index()
+	{
+		return "index";
+	}
+}
+
+
+How does the dispatcher map to a view?
+
+Views should not be given by full file names and paths. By default, they are suspected to reside in the folder "/WEB-INF/views/". The controller should only give the name part, while the view engine adds path and suffix. For example, if a controller returns the name "index", the view engine will try to invoke the template "/WEB-INF/views/index.jspx" by default.
+
+
+How does the controller get any data from outside?
+
+First of all, the dispatcher will try to inject as much data as possible into controller properties. There are four magic objects which will be injected by type, so the property name is actually irrelevant. These four objects are (by type):
+
+- javax.servlet.ServletContext - the web application scope
+- javax.servlet.http.HttpServletRequest - the current request
+- javax.servlet.http.HttpServletResponse - the current response
+- de.skaliant.wax.app.Config - an application-specific configuration object
+
+If any of the controller's properties is declared with a fitting data type, it will get the corresponding instance. More on the config object later.
+
+Secondly, the dispatcher tries to convert and inject HTTP parameters both from GET and POST (even file uploads) into properties. This is done by matching parameter names to bean property statements and trying to convert the parameter string value to the target data type. The most simple case looks like this:
+
+Parameter:
+	?name=value
+Property:
+	public void setName(String name)
+
+In this case, the property "name" will be set to the string "value". However, you may use property chaining for more complex scenarios. Consider this parameter:
+
+	?ownership.person.name=John
+
+The dispatcher will try to walk along this statement starting at the controller bean and, if not interrupted by missing properties or null values, finish with an assignment equivalent to this:
+
+	controller.getOwnership().getPerson().setName("John");
+	
+These two examples used string properties, so no type conversion had to be done. Consider the following case:
+
+Parameter:
+	?age=18
+Property:
+	public void setAge(int age)
+
+The numeric parameter will be converted to an int. What happens if the parameter value is not numeric or too large for int? Then it will be silently ignored. Arrays and Collections are supported as well, e.g.
+
+Parameter:
+	?styles=Rock&styles=Pop
+Property:
+	public void setStyles(String[] styles)
+
+For parameterized Collections, the type argument will be considered (e.g. in a List<Integer>). Generally, the following type conversion are supported:
+
+- All 8 primitive types and their wrappers
+- Object and String, as pass-through
+- Enums; by name, case-insensitive
+- BigInteger, BigDecimal
+- Arrays, Lists, and Sets of the aforemeantioned types
+- Date; possible formats are:
+-- All numeric, 8 digits; will be interpreted as yyyymmdd
+-- All numeric, more than 8 digits; will be interpreted as a millisecond timestamp
+-- Digits separated by any other chars, must form three groups of digits; first and last group will be checked for being 4 digits long, which will result in either y-m-d or d-m-y order
+
+In addition to this, the action method may be declared using method arguments. If present, the framework will try to inject data into the arguments -- first of all again the four special objects by type. Then there's the chance to assign a parameter name to a method argument by placing an annotation. This is unfortunately necessary, as the original name is lost during the compile phase and not available through reflection (only via debug information, not reliable). At last, any method argument which is not annotated will be set to a path info part by order. If this sounds complicated to you, simply don't use it and declare properties instead.
+
+
+What results are possible?
+
+You can use class de.skaliant.wax.app.results.Result to create different result objects. Without using this class, all you can do is give a view name as String (or anything else, as it will be converted to a String). This class offers the following static factory methods:
+
+- view(String) -- pretty much the same as returning a String
+- view(String, int) -- give a view name and a HTTP status code
+- redirect(String) -- send a redirect (302) to the given absolute or relative URL
+- redirect(Class<?>) -- redirect to the default action of the given controller
+- redirect(Class<?>, String) -- redirect to an action method of the given controller; as long as I don't use Java 8, I'm stuck with Strings for methods
+- json(Object) -- consider the given Object as a bean or value, convert it to JSON format recursively, and send the result to the client
+- error(int) -- just send a HTTP status code
+- binary(byte[], String) -- send raw binary data using a given content type
+- binary(byte[], String, String) -- send raw binary data using a given content type, treat it like a file download using the given file name
+- binary(File, String) -- once again binary download with content type, the name of the file will be used for the download
+- binary(File, String, String) -- binary download, content type, file name
+
+
+Is it possible to declare different environments?
+
+From my experience, you typically have two or three different environments (development, testing/staging, productive), and you need different settings (database, logging etc.) for these three. So there is a means of giving a hint on the current environment, and this hint has a direct effect on logging and configuration. Basically, an environment is just a name converted to lower case. There is only one pre-defined environment, it's the default one, and it's named "dev" for "development". So if you don't give a hint, the environment will be "dev". How to give a hint: start your servlet container with a Java system property named "wax.env" and give it the name you want to use, e.g. "-Dwax.env=prod" for a production system. If you don't have different environments, just ignore this whole section.
+
+
+How is Logging formed?
+
+Though there is no dependency to a specific logging library, there is support for either java.util logging or log4j version 1.2, and the decision is made during bootstrapping phase by looking for the log4j logger class. If it is found in the classpath, log4j will be used. Otherwise, java.util logging will be used. Logging configuration can be made specific and environment-dependent. Therefore the logging initializer will look for settings files in "/WEB-INF/" with or without an environment hint. For example, if log4j is found in a "dev" environment, it will look for these files (in this order) and use the first hit for configuration:
+
+- log4j-dev.properties
+- log4j-dev.xml
+- log4j.properties
+- log4j.xml
+
+The same rule applies for java.util logging:
+
+- logging-dev.properties
+- logging.properties
+
+If neither of these files are present, both implementations will fall back to their respective default behaviour (e.g. a log4j.properties in the class path).
+
+
+Any support for application specific configuration?
+
+Most applications need some configuration of their own, for example to specify database or path information and the like. There is support for a simple, XML-based configuration file in "/WEB-INF/" which can be made environment-specific. So if a config object is requested by a controller by declaring a property with the type de.skaliant.app.Config, the following files will be searched in a "dev" environment (in this order):
+
+- config-dev.xml
+- config.xml
+
+These config files basically contain name-value pairs, where a value may consist of multiple values. The structure looks as follows:
+
+ <?xml version="1.0"?>
+ <config>
+   <entry id="type">car</entry>
+   <entry id="colors">
+     <value>red</value>
+     <value>green</value>
+     <value>blue</value>
+   </entry>
+ </config>
+ 
+The name of the root element does not matter. Each "entry" element will be a single configuration argument, and either the contents of "value" elements or, as a simple shortcut, the text node content of the "entry" element itself will be the value(s).
+
+
