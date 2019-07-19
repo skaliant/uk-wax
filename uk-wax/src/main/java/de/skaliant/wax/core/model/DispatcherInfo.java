@@ -20,106 +20,89 @@ import de.skaliant.wax.util.logging.Log;
  *
  * @author Udo Kastilan
  */
-public class DispatcherInfo
-{
+public class DispatcherInfo {
 	private final static long CONF_CHECK_SPAN = 60000;
 	private final Log LOG = Log.get(DispatcherInfo.class);
 
-	private Map<String, ConfigEntry> confPerHint = new HashMap<String, ConfigEntry>(3);
+	private Map<String, ConfigEntry> confPerHint = new HashMap<>(3);
 	private ControllerManager resolver = null;
 	private ViewEngine viewEngine = null;
 	private Router router = null;
 	private String pattern = null;
 
-	
-	public ViewEngine getViewEngine()
-	{
+
+	public ViewEngine getViewEngine() {
 		return viewEngine;
 	}
 
 
-	public void setViewEngine(ViewEngine viewEngine)
-	{
+	public void setViewEngine(ViewEngine viewEngine) {
 		this.viewEngine = viewEngine;
 	}
 
 
-	public ControllerManager getControllerManager()
-	{
+	public ControllerManager getControllerManager() {
 		return resolver;
 	}
 
 
-	public void setControllerManager(ControllerManager resolver)
-	{
+	public void setControllerManager(ControllerManager resolver) {
 		this.resolver = resolver;
 	}
 
 
-	public Router getRouter()
-	{
+	public Router getRouter() {
 		return router;
 	}
 
 
-	public void setRouter(Router router)
-	{
+	public void setRouter(Router router) {
 		this.router = router;
 	}
 
 
-	public String getPattern()
-	{
+	public String getPattern() {
 		return pattern;
 	}
 
 
-	public void setPattern(String pattern)
-	{
+	public void setPattern(String pattern) {
 		this.pattern = pattern;
 	}
-	
-	
-	public boolean isSuffixPattern()
-	{
-		return (pattern != null) && pattern.matches("^[*][.].+$");
+
+
+	public boolean isSuffixPattern() {
+		return (pattern != null) && pattern.startsWith("*.");
 	}
 
 
-	public Config findConfig(Call ctx)
-	{
+	public Config findConfig(Call ctx) {
 		String hint = Environment.getInstance().getHint();
 		ConfigEntry ce = null;
 
 		ce = confPerHint.get(hint);
 		if ((ce == null)
-				|| ((System.currentTimeMillis() - ce.checked) > CONF_CHECK_SPAN))
-		{
+				|| ((System.currentTimeMillis() - ce.checked) > CONF_CHECK_SPAN)) {
 			File f = null;
 
 			f = new File(ctx.getRealPath("/WEB-INF/config-" + hint + ".xml"));
-			if (!f.isFile())
-			{
+			if (!f.isFile()) {
 				f = new File(ctx.getRealPath("/WEB-INF/config.xml"));
 			}
-			if (f.isFile() && ((ce == null) || (ce.timestamp != f.lastModified())))
-			{
-				try
-				{
+			if (f.isFile() && ((ce == null) || (ce.timestamp != f.lastModified()))) {
+				try {
 					ce = new ConfigEntry();
 					LOG.info("Loading config file \"" + f.getAbsolutePath() + '"');
 					ce.conf = Config.load(f);
 					ce.timestamp = f.lastModified();
 					confPerHint.put(hint, ce);
 				}
-				catch (Exception ex)
-				{
-					LOG.error("Cannot load config file \"" + f.getAbsolutePath() + '"', ex);
+				catch (Exception ex) {
+					LOG.error("Cannot load config file \"" + f.getAbsolutePath() + '"',
+							ex);
 					return new Config();
 				}
-			}
-			else if (!f.isFile())
-			{
+			} else if (!f.isFile()) {
 				LOG.info("No config file found");
 				ce = new ConfigEntry();
 				ce.conf = new Config();
@@ -129,8 +112,7 @@ public class DispatcherInfo
 		return ce.conf;
 	}
 
-	private static class ConfigEntry
-	{
+	private static class ConfigEntry {
 		private Config conf = null;
 		private long timestamp = 0;
 		private long checked = 0;

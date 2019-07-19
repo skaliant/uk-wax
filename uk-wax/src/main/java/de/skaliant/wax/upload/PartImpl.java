@@ -17,9 +17,7 @@ import de.skaliant.wax.util.MiscUtils;
  *
  * @author Udo Kastilan
  */
-class PartImpl
-	implements Part
-{
+class PartImpl implements Part {
 	private List<HeaderField> header = Collections.emptyList();
 	private StorageHandler storage = null;
 	private String contentType = null;
@@ -27,9 +25,7 @@ class PartImpl
 	private String name = null;
 
 
-	PartImpl(List<HeaderField> header, String name, String fileName, String contentType,
-			StorageHandler storage)
-	{
+	PartImpl(List<HeaderField> header, String name, String fileName, String contentType, StorageHandler storage) {
 		this.name = name;
 		this.fileName = fileName;
 		this.header = header;
@@ -38,77 +34,71 @@ class PartImpl
 	}
 
 
-	public long getSize()
-	{
+	@Override
+	public long getSize() {
 		return storage.getSize();
 	}
 
-	
-	public String getContentType()
-	{
+
+	@Override
+	public String getContentType() {
 		return contentType;
 	}
-	
 
-	public String getName()
-	{
+
+	@Override
+	public String getName() {
 		return name;
 	}
 
 
-	public List<HeaderField> getHeader()
-	{
+	@Override
+	public List<HeaderField> getHeader() {
 		return header;
 	}
 
-	
+
+	@Override
 	public File getAsFile()
-		throws IOException
-	{
+		throws IOException {
 		return storage.getAsFile();
 	}
-	
 
+
+	@Override
 	public String getValue(String encoding)
-		throws IOException
-	{
+		throws IOException {
 		StringBuilder sb = new StringBuilder();
 		Reader r = null;
 		int c = 0;
 
-		try
-		{
+		try {
 			r = new BufferedReader(new InputStreamReader(getStream(), encoding));
-			while ((c = r.read()) != -1)
-			{
+			while ((c = r.read()) != -1) {
 				sb.append((char) c);
 			}
 		}
-		finally
-		{
+		finally {
 			r = MiscUtils.close(r);
 		}
 		return sb.toString();
 	}
 
 
+	@Override
 	public void writeTo(File file)
-		throws IOException
-	{
+		throws IOException {
 		storage.writeTo(file);
 	}
 
-	
-	public String getFileNameRefined()
-	{
-		if (MiscUtils.notEmpty(fileName))
-		{
+
+	@Override
+	public String getFileNameRefined() {
+		if (MiscUtils.isNotEmpty(fileName)) {
 			char[] seps = { '/', '\\' };
-			
-			for (char s : seps)
-			{
-				if (fileName.indexOf(s) != -1)
-				{
+
+			for (char s : seps) {
+				if (fileName.indexOf(s) != -1) {
 					fileName = fileName.substring(fileName.lastIndexOf(s) + 1);
 				}
 			}
@@ -116,23 +106,23 @@ class PartImpl
 		}
 		return null;
 	}
-	
 
-	public String getFileNameRaw()
-	{
+
+	@Override
+	public String getFileNameRaw() {
 		return fileName;
 	}
 
 
-	public boolean isFile()
-	{
+	@Override
+	public boolean isFile() {
 		return fileName != null;
 	}
 
 
+	@Override
 	public InputStream getStream()
-		throws IOException
-	{
+		throws IOException {
 		return storage.getInputStream();
 	}
 }

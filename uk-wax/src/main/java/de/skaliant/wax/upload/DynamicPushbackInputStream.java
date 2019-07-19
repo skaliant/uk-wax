@@ -11,9 +11,7 @@ import java.io.InputStream;
  *
  * @author Udo Kastilan
  */
-class DynamicPushbackInputStream
-	extends FilterInputStream
-{
+class DynamicPushbackInputStream extends FilterInputStream {
 	private byte[] buf = null;
 	private int size = 0;
 	private int pos = 0;
@@ -30,8 +28,7 @@ class DynamicPushbackInputStream
 	 *          Initial buffer size and increment value for further buffer
 	 *          allocation
 	 */
-	DynamicPushbackInputStream(InputStream in, int size)
-	{
+	DynamicPushbackInputStream(InputStream in, int size) {
 		super(in);
 		this.size = size;
 		buf = new byte[size];
@@ -43,10 +40,8 @@ class DynamicPushbackInputStream
 	 * 
 	 * @param b
 	 */
-	public void unread(int b)
-	{
-		if (pos == buf.length)
-		{
+	public void unread(int b) {
+		if (pos == buf.length) {
 			byte[] na = new byte[buf.length + size];
 
 			System.arraycopy(buf, 0, na, 0, buf.length);
@@ -58,16 +53,12 @@ class DynamicPushbackInputStream
 
 	@Override
 	public int read()
-		throws IOException
-	{
+		throws IOException {
 		int b = -1;
 
-		if (pos > 0)
-		{
+		if (pos > 0) {
 			b = 0x00ff & buf[--pos];
-		}
-		else
-		{
+		} else {
 			b = in.read();
 		}
 		return b;

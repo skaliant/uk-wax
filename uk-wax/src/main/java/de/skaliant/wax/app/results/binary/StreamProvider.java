@@ -9,8 +9,7 @@ import java.io.InputStream;
  *
  * @author Udo Kastilan
  */
-public interface StreamProvider
-{
+public interface StreamProvider {
 	/**
 	 * 
 	 * @return
@@ -18,10 +17,13 @@ public interface StreamProvider
 	 */
 	InputStream getStream()
 		throws IOException;
-	
+
+
 	long getSize();
-	
+
+
 	String getName();
-	
+
+
 	String getContentType();
 }

@@ -40,7 +40,7 @@ public class HeaderFieldParser
 
 	private static HeaderField parse(String name, String line, boolean valueOnly)
 	{
-		if (MiscUtils.empty(line))
+		if (MiscUtils.isEmpty(line))
 		{
 			return null;
 		}

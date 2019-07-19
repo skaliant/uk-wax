@@ -16,49 +16,40 @@ import de.skaliant.wax.util.MiscUtils;
  *
  * @author Udo Kastilan
  */
-class BinaryResult
-	extends Result
-{
+class BinaryResult extends Result {
 	private StreamProvider provider = null;
-	
-	
-	BinaryResult(StreamProvider provider)
-	{
+
+
+	BinaryResult(StreamProvider provider) {
 		this.provider = provider;
 	}
-	
-	
+
+
 	@Override
 	public void handle(Call ctx)
-		throws IOException
-	{
+		throws IOException {
 		HttpServletResponse resp = ctx.getResponse();
 		String ct = provider.getContentType();
 		OutputStream out = null;
 		InputStream in = null;
 		byte[] buf = new byte[4096];
 		int r = 0;
-		
-		if (provider.getSize() > 0)
-		{
+
+		if (provider.getSize() > 0) {
 			resp.setContentLength((int) provider.getSize());
 		}
 		resp.setContentType(ct == null ? "application/octet-stream" : ct);
-		if (provider.getName() != null)
-		{
+		if (provider.getName() != null) {
 			resp.setHeader("Content-Disposition", "attachment; filename=" + provider.getName());
 		}
-		try
-		{
+		try {
 			in = provider.getStream();
 			out = resp.getOutputStream();
-			while ((r = in.read(buf)) != -1)
-			{
+			while ((r = in.read(buf)) != -1) {
 				out.write(buf, 0, r);
 			}
 		}
-		finally
-		{
+		finally {
 			MiscUtils.close(in);
 		}
 	}

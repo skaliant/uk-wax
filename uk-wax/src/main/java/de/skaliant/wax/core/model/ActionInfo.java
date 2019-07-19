@@ -10,32 +10,35 @@ import de.skaliant.wax.app.Guardian;
  * 
  * @author Udo Kastilan
  */
-public class ActionInfo
-{
+public class ActionInfo {
 	private Class<? extends Guardian> guardian = null;
-	private String name = null;
-	private Method method = null;
+	private String name;
+	private Method method;
 	private boolean defaultAction = false;
-	
+
+
+	public ActionInfo(Method method, String name) {
+		this.method = method;
+		this.name = name;
+	}
+
 
 	/**
 	 * Is this action guarded?
 	 * 
 	 * @return Is it guarded?
 	 */
-	public boolean isGuarded()
-	{
+	public boolean isGuarded() {
 		return guardian != null;
 	}
-	
-	
+
+
 	/**
 	 * Get the guardian class type, if guarded.
 	 * 
 	 * @return Guardian class type or null
 	 */
-	public Class<? extends Guardian> getGuardian()
-	{
+	public Class<? extends Guardian> getGuardian() {
 		return guardian;
 	}
 
@@ -43,10 +46,10 @@ public class ActionInfo
 	/**
 	 * Set the guardian class type.
 	 * 
-	 * @param guardian Guardian class type
+	 * @param guardian
+	 *          Guardian class type
 	 */
-	public void setGuardian(Class<? extends Guardian> guardian)
-	{
+	public void setGuardian(Class<? extends Guardian> guardian) {
 		this.guardian = guardian;
 	}
 
@@ -56,8 +59,7 @@ public class ActionInfo
 	 * 
 	 * @return Default action?
 	 */
-	public boolean isDefaultAction()
-	{
+	public boolean isDefaultAction() {
 		return defaultAction;
 	}
 
@@ -65,10 +67,10 @@ public class ActionInfo
 	/**
 	 * Is this the default action of the controller?
 	 * 
-	 * @param defaultAction Default action?
+	 * @param defaultAction
+	 *          Default action?
 	 */
-	public void setDefaultAction(boolean defaultAction)
-	{
+	public void setDefaultAction(boolean defaultAction) {
 		this.defaultAction = defaultAction;
 	}
 
@@ -78,20 +80,8 @@ public class ActionInfo
 	 * 
 	 * @return Action name
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return name;
-	}
-
-
-	/**
-	 * Set the action's name. This name should be normalized, e.g. by converting it to all lower case.
-	 * 
-	 * @param name Action name
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
 	}
 
 
@@ -100,19 +90,7 @@ public class ActionInfo
 	 * 
 	 * @return Action method
 	 */
-	public Method getMethod()
-	{
+	public Method getMethod() {
 		return method;
-	}
-
-
-	/**
-	 * The method implementing the action.
-	 * 
-	 * @param method Action method
-	 */
-	public void setMethod(Method method)
-	{
-		this.method = method;
 	}
 }

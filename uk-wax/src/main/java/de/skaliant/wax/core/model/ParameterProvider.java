@@ -9,19 +9,20 @@ import java.util.Map;
  *
  * @author Udo Kastilan
  */
-public interface ParameterProvider
-{
+public interface ParameterProvider {
 	/**
 	 * Checks whether a certain name is present.
 	 * 
-	 * @param name Parameter name
+	 * @param name
+	 *          Parameter name
 	 * @return Is it present?
 	 */
 	boolean isParameterPresent(String name);
 
 
 	/**
-	 * Get all parameter names. Order might be important, so the original order is preserved.
+	 * Get all parameter names. Order might be important, so the original order is
+	 * preserved.
 	 * 
 	 * @return Parameter names
 	 */
@@ -31,7 +32,8 @@ public interface ParameterProvider
 	/**
 	 * Gets the first (or only) value of a parameter.
 	 * 
-	 * @param name Name
+	 * @param name
+	 *          Name
 	 * @return First (or only) value, or null if not present/without value
 	 */
 	String getParameter(String name);
@@ -40,8 +42,10 @@ public interface ParameterProvider
 	/**
 	 * Get all the values of a parameter.
 	 * 
-	 * @param name Name
-	 * @return All values; may be null in case the parameter is not present/has no values at all
+	 * @param name
+	 *          Name
+	 * @return All values; may be null in case the parameter is not present/has no
+	 *         values at all
 	 */
 	String[] getParameterValues(String name);
 

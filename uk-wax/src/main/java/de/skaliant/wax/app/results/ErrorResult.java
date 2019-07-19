@@ -13,36 +13,28 @@ import de.skaliant.wax.core.model.Call;
  * 
  * @author Udo Kastilan
  */
-class ErrorResult
-	extends Result
-{
+class ErrorResult extends Result {
 	private String message = null;
 	private int code = HttpServletResponse.SC_OK;
 
 
-	ErrorResult(int code, String message)
-	{
+	ErrorResult(int code, String message) {
 		this.message = message;
 		this.code = code;
 	}
 
 
-	ErrorResult(int code)
-	{
+	ErrorResult(int code) {
 		this.code = code;
 	}
 
 
 	@Override
 	public void handle(Call ctx)
-		throws ServletException, IOException
-	{
-		if (message != null)
-		{
+		throws ServletException, IOException {
+		if (message != null) {
 			ctx.getResponse().sendError(code, message);
-		}
-		else
-		{
+		} else {
 			ctx.getResponse().sendError(code);
 		}
 	}

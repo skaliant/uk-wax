@@ -23,10 +23,7 @@ import de.skaliant.wax.util.MiscUtils;
  *
  * @author Udo Kastilan
  */
-class FlexibleStorageHandler
-	extends OutputStream
-	implements StorageHandler
-{
+class FlexibleStorageHandler extends OutputStream implements StorageHandler {
 	/**
 	 * Prefix string for temp files
 	 */
@@ -47,7 +44,7 @@ class FlexibleStorageHandler
 	 * List of (input) streams which need to be cleaned up after usage, i.e.
 	 * FileInputStreams
 	 */
-	private List<Closeable> closeables = new ArrayList<Closeable>(1);
+	private List<Closeable> closeables = new ArrayList<>(1);
 	private OutputStream out = null;
 	private byte[] data = null;
 	private boolean closed = false;
@@ -55,12 +52,9 @@ class FlexibleStorageHandler
 	private long written = 0;
 
 
-	private FlexibleStorageHandler(File tempDir, int threshold)
-	{
-		if (threshold < 0)
-		{
-			throw new IllegalArgumentException(
-					"Argument threshold must not be a negative value");
+	private FlexibleStorageHandler(File tempDir, int threshold) {
+		if (threshold < 0) {
+			throw new IllegalArgumentException("Argument threshold must not be a negative value");
 		}
 		this.tempDir = tempDir;
 		this.threshold = threshold;
@@ -80,34 +74,29 @@ class FlexibleStorageHandler
 	 *          this value will be stored in a temp file
 	 * @return StorageHandler instance
 	 */
-	static StorageHandler create(File tempDir, int threshold)
-	{
+	static StorageHandler create(File tempDir, int threshold) {
 		return new FlexibleStorageHandler(tempDir, threshold);
 	}
 
 
-	public long getSize()
-	{
+	@Override
+	public long getSize() {
 		return written;
 	}
-	
-	
+
+
+	@Override
 	public File getAsFile()
-		throws IOException
-	{
-		if (file == null)
-		{
+		throws IOException {
+		if (file == null) {
 			File f = File.createTempFile(PREFIX, SUFFIX, tempDir);
-			
-			try
-			{
+
+			try {
 				writeTo(f);
 				file = f;
 			}
-			catch (IOException ex)
-			{
-				if (f.isFile())
-				{
+			catch (IOException ex) {
+				if (f.isFile()) {
 					f.delete();
 				}
 				throw ex;
@@ -117,56 +106,45 @@ class FlexibleStorageHandler
 	}
 
 
+	@Override
 	public void writeTo(File to)
-		throws IOException
-	{
+		throws IOException {
 		InputStream sin = null;
 		OutputStream sout = null;
 		byte[] buf = new byte[8192];
 		int r = 0;
 
 		close();
-		try
-		{
-			if (data != null)
-			{
+		try {
+			if (data != null) {
 				sin = new ByteArrayInputStream(data);
-			}
-			else if (file != null)
-			{
+			} else if (file != null) {
 				sin = new FileInputStream(file);
-			}
-			else
-			{
+			} else {
 				throw new RuntimeException("This is not possible ... yet it happened");
 			}
 			sout = new FileOutputStream(to);
-			while ((r = sin.read(buf)) != -1)
-			{
+			while ((r = sin.read(buf)) != -1) {
 				sout.write(buf, 0, r);
 			}
 		}
-		finally
-		{
+		finally {
 			MiscUtils.close(sin);
 			MiscUtils.close(sout);
 		}
 	}
 
 
+	@Override
 	public InputStream getInputStream()
-		throws IOException
-	{
-		if (!closed)
-		{
+		throws IOException {
+		if (!closed) {
 			close();
 		}
-		if (data != null)
-		{
+		if (data != null) {
 			return new ByteArrayInputStream(data);
 		}
-		if (file != null)
-		{
+		if (file != null) {
 			InputStream in = new FileInputStream(file);
 
 			closeables.add(in);
@@ -176,16 +154,14 @@ class FlexibleStorageHandler
 	}
 
 
-	public void cleanup()
-	{
+	@Override
+	public void cleanup() {
 		MiscUtils.close(out);
-		for (Closeable c : closeables)
-		{
+		for (Closeable c : closeables) {
 			MiscUtils.close(c);
 		}
 		closeables.clear();
-		if (file != null)
-		{
+		if (file != null) {
 			file.delete();
 		}
 	}
@@ -193,20 +169,14 @@ class FlexibleStorageHandler
 
 	@Override
 	public void close()
-		throws IOException
-	{
-		if (closed)
-		{
+		throws IOException {
+		if (closed) {
 			return;
 		}
-		if (file == null)
-		{
-			if (out instanceof ByteArrayOutputStream)
-			{
+		if (file == null) {
+			if (out instanceof ByteArrayOutputStream) {
 				data = ((ByteArrayOutputStream) out).toByteArray();
-			}
-			else
-			{
+			} else {
 				data = new byte[0];
 			}
 		}
@@ -217,25 +187,19 @@ class FlexibleStorageHandler
 
 	@Override
 	public void write(int b)
-		throws IOException
-	{
-		if (closed)
-		{
+		throws IOException {
+		if (closed) {
 			throw new IOException("Stream has already been closed");
 		}
-		if (out == null)
-		{
+		if (out == null) {
 			out = new ByteArrayOutputStream(threshold);
 		}
-		if (written == threshold)
-		{
+		if (written == threshold) {
 			OutputStream curr = out;
 
-			file = (tempDir == null) ? File.createTempFile(PREFIX, SUFFIX) : File
-					.createTempFile(PREFIX, SUFFIX, tempDir);
+			file = (tempDir == null) ? File.createTempFile(PREFIX, SUFFIX) : File.createTempFile(PREFIX, SUFFIX, tempDir);
 			out = new BufferedOutputStream(new FileOutputStream(file));
-			if (curr instanceof ByteArrayOutputStream)
-			{
+			if (curr instanceof ByteArrayOutputStream) {
 				out.write(((ByteArrayOutputStream) curr).toByteArray());
 			}
 		}
@@ -244,9 +208,9 @@ class FlexibleStorageHandler
 	}
 
 
+	@Override
 	public OutputStream getOutputStream()
-		throws IOException
-	{
+		throws IOException {
 		return this;
 	}
 }

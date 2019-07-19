@@ -32,7 +32,7 @@ public class HeaderField
 		}
 		if (params.isEmpty())
 		{
-			params = new HashMap<String, String>(2);
+			params = new HashMap<>(2);
 		}
 		params.put(name, value);
 	}

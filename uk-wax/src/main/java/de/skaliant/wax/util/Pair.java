@@ -1,13 +1,11 @@
 package de.skaliant.wax.util;
 
-
 /**
  * Simple helper class for a pair of objects (such as a key value pair).
  *
  * @author Udo Kastilan
  */
-public class Pair<A, B>
-{
+public class Pair<A, B> {
 	private A first = null;
 	private B second = null;
 
@@ -15,24 +13,26 @@ public class Pair<A, B>
 	/**
 	 * Creates an instance making use of type inference.
 	 * 
-	 * @param first First object
-	 * @param second Second object
+	 * @param first
+	 *          First object
+	 * @param second
+	 *          Second object
 	 * @return Pair
 	 */
-	public static <A, B> Pair<A, B> create(A first, B second)
-	{
+	public static <A, B> Pair<A, B> create(A first, B second) {
 		return new Pair<A, B>(first, second);
 	}
-	
+
 
 	/**
 	 * Creates an instance.
 	 * 
-	 * @param first First object
-	 * @param second Second object
+	 * @param first
+	 *          First object
+	 * @param second
+	 *          Second object
 	 */
-	public Pair(A first, B second)
-	{
+	public Pair(A first, B second) {
 		this.first = first;
 		this.second = second;
 	}
@@ -43,19 +43,17 @@ public class Pair<A, B>
 	 * 
 	 * @return
 	 */
-	public A getFirst()
-	{
+	public A getFirst() {
 		return first;
 	}
 
-	
+
 	/**
 	 * Sets the first object.
 	 * 
 	 * @param first
 	 */
-	public void setFirst(A first)
-	{
+	public void setFirst(A first) {
 		this.first = first;
 	}
 
@@ -65,8 +63,7 @@ public class Pair<A, B>
 	 * 
 	 * @return
 	 */
-	public B getSecond()
-	{
+	public B getSecond() {
 		return second;
 	}
 
@@ -76,8 +73,7 @@ public class Pair<A, B>
 	 * 
 	 * @param second
 	 */
-	public void setSecond(B second)
-	{
+	public void setSecond(B second) {
 		this.second = second;
 	}
 }

@@ -12,38 +12,31 @@ import de.skaliant.wax.core.model.DefaultEnvironment;
  *
  * @author Udo Kastilan
  */
-public abstract class Environment
-{
+public abstract class Environment {
 	private final static String ENV_IMPL_ARG = "wax.env.impl";
 	private static Environment env = null;
 
-	
-	static 
-	{
-		if (System.getProperty(ENV_IMPL_ARG) != null)
-		{
-			try
-			{
+	static {
+		if (System.getProperty(ENV_IMPL_ARG) != null) {
+			try {
 				env = Environment.class.cast(Class.forName(System.getProperty(ENV_IMPL_ARG)));
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
-		if (env == null)
-		{
+		if (env == null) {
 			env = new DefaultEnvironment();
 		}
 	}
-	
+
 
 	/**
 	 * 
 	 * @return
 	 */
 	public abstract String getHint();
-	
+
 
 	/**
 	 * 
@@ -51,10 +44,9 @@ public abstract class Environment
 	 * @return
 	 */
 	public abstract File getConfigLocation(ServletContext sc);
-	
-	
-	public static Environment getInstance()
-	{
+
+
+	public static Environment getInstance() {
 		return env;
 	}
 }

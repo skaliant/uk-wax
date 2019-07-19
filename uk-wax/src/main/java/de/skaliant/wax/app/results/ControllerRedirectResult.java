@@ -18,104 +18,94 @@ import de.skaliant.wax.util.URLBuilder;
  *
  * @author Udo Kastilan
  */
-class ControllerRedirectResult
-	extends Result
-	implements Result.RedirectBuilder
-{
+class ControllerRedirectResult extends Result implements Result.RedirectBuilder {
 	private String protocol = null;
 	private URLBuilder ub = new URLBuilder();
 	private Class<?> ctrl = null;
 	private String actionMethod = null;
-	
-	
-	ControllerRedirectResult(Class<?> ctrl)
-	{
+
+
+	ControllerRedirectResult(Class<?> ctrl) {
 		this.ctrl = ctrl;
 	}
-	
-	
-	ControllerRedirectResult(Class<?> ctrl, String actionMethod)
-	{
+
+
+	ControllerRedirectResult(Class<?> ctrl, String actionMethod) {
 		this.ctrl = ctrl;
 		this.actionMethod = actionMethod;
 	}
-	
-	
+
+
 	@Override
 	public void handle(Call call)
-		throws ServletException, IOException
-	{
+		throws ServletException, IOException {
 		HttpServletResponse resp = call.getResponse();
 		DispatcherInfo disp = call.getDispatcherInfo();
 		ControllerInfo ci = disp.getControllerManager().findForType(ctrl);
 		ActionInfo ai = null;
 		URLBuilder url = new URLBuilder();
-		
-		if (ci == null)
-		{
+
+		if (ci == null) {
 			throw new ServletException("Controller class not found: " + ctrl.getName());
 		}
-		if (actionMethod != null)
-		{
+		if (actionMethod != null) {
 			ai = ci.findByMethodName(actionMethod);
 		}
-		if ((protocol != null) && !call.getScheme().equalsIgnoreCase(protocol.toString()))
-		{
+		if ((protocol != null) && !call.getScheme().equalsIgnoreCase(protocol.toString())) {
 			url.setScheme(protocol.toString().toLowerCase());
 			url.setHost(call.getHost());
-			if (ub.getPort() != null)
-			{
+			if (ub.getPort() != null) {
 				url.setPort(ub.getPort());
 			}
 		}
-		
+
 		url.appendPath(call.getContextPath()).appendPath(disp.getRouter().createPath(disp, ci, ai));
 		url.appendPath(ub.getPath());
 		url.setQueryString(ub.getQueryString());
 		url.setAnchor(ub.getAnchor());
-		
+
 		RequestAttributeRedirectStore.save(call.getRequest());
 		resp.sendRedirect(resp.encodeRedirectURL(url.toString()));
 	}
 
 
-	public RedirectBuilder appendPath(String path)
-	{
+	@Override
+	public RedirectBuilder appendPath(String path) {
 		ub.appendPath(path);
 		return this;
 	}
 
 
-	public RedirectBuilder usingScheme(String protocol)
-	{
+	@Override
+	public RedirectBuilder usingScheme(String protocol) {
 		this.protocol = protocol;
 		return this;
 	}
-	
-	
-	public RedirectBuilder atPort(int port)
-	{
+
+
+	@Override
+	public RedirectBuilder atPort(int port) {
 		ub.setPort(port);
 		return this;
 	}
 
 
-	public RedirectBuilder addParam(String name, Object... values)
-	{
+	@Override
+	public RedirectBuilder addParam(String name, Object... values) {
 		ub.addParam(name, values);
 		return this;
 	}
 
 
-	public RedirectBuilder anchor(String name)
-	{
+	@Override
+	public RedirectBuilder anchor(String name) {
 		ub.setAnchor(name);
 		return this;
 	}
-	
-	
-	public Result build()
-	{
+
+
+	@Override
+	public Result build() {
 		return this;
 	}
 }

@@ -11,7 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.skaliant.wax.core.model.Bootstrapper;
+import de.skaliant.wax.core.boot.Bootstrapper;
 import de.skaliant.wax.util.logging.Log;
 
 
@@ -20,43 +20,41 @@ import de.skaliant.wax.util.logging.Log;
  *
  * @author Udo Kastilan
  */
-public class DispatcherFilter
-	implements Filter
-{
+public class DispatcherFilter implements Filter {
 	private FilterConfig filterConfig = null;
 	private Dispatcher dispatcher = null;
-	
-	
+
+
+	@Override
 	public void init(FilterConfig filterConfig)
-		throws ServletException
-	{
+		throws ServletException {
 		this.filterConfig = filterConfig;
 		Log.init(Environment.getInstance().getConfigLocation(filterConfig.getServletContext()));
 		Log.get(DispatcherFilter.class).info("Environment is \"" + Environment.getInstance().getHint() + '"');
 		dispatcher = new Dispatcher(Bootstrapper.configure(filterConfig.getServletContext(), filterConfig));
 	}
 
-	
+
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-		throws IOException, ServletException
-	{
+		throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 		String servletPath = req.getServletPath();
 		String pathInfo = req.getPathInfo();
-		
+
 		/*
-		 * For Filters, servlet path and path info seem to be handled in a different way compared to Servlets.
-		 * For instance, if the URL mapping is "/de/*", a path like "/de/more/path" is interpreted for a Servlet
-		 * as servlet path "/de" and path info "/more/path", whereas the Filter gets "/de/more/path" as servlet
-		 * path and null as the path info. The following lines try to normalize this behaviour.
+		 * For Filters, servlet path and path info seem to be handled in a different
+		 * way compared to Servlets. For instance, if the URL mapping is "/de/*", a
+		 * path like "/de/more/path" is interpreted for a Servlet as servlet path
+		 * "/de" and path info "/more/path", whereas the Filter gets "/de/more/path"
+		 * as servlet path and null as the path info. The following lines try to
+		 * normalize this behaviour.
 		 */
-		if (!dispatcher.getInfo().isSuffixPattern())
-		{
+		if (!dispatcher.getInfo().isSuffixPattern()) {
 			String mappedPath = dispatcher.getInfo().getPattern().replace("*", "");
-			
-			if ((mappedPath.length() > 1) && mappedPath.endsWith("/"))
-			{
+
+			if ((mappedPath.length() > 1) && mappedPath.endsWith("/")) {
 				mappedPath = mappedPath.substring(0, mappedPath.length() - 1);
 			}
 			pathInfo = servletPath.substring(mappedPath.length());
@@ -65,9 +63,9 @@ public class DispatcherFilter
 		dispatcher.handle(filterConfig.getServletContext(), req, resp, servletPath, pathInfo);
 	}
 
-	
-	public void destroy()
-	{
+
+	@Override
+	public void destroy() {
 		//
 	}
 }

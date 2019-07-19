@@ -22,15 +22,20 @@ import de.skaliant.wax.util.MiscUtils;
 
 
 /**
- * Simple XML-based configuration with named values. Each configuration entry may have one or
- * more values. The rules for the XML document structure are as follows:
+ * Simple XML-based configuration with named values. Each configuration entry
+ * may have one or more values. The rules for the XML document structure are as
+ * follows:
  * 
  * <ul>
- * 	<li>The name of the root element is irrelevant, you may name it as you like (though I recommend "conf" or "config")</li>
- *  <li>For each configuration entry, give a "entry" element defining both name and value(s)</li>
- *  <li>The name of the entry is to be given via "id" attribute</li>
- *  <li>If the the entry has 1 value, give it as text content of the "entry" element</li>
- *  <li>If the entry has more than 1 value, insert a "value" element with a text node for each value</li>
+ * <li>The name of the root element is irrelevant, you may name it as you like
+ * (though I recommend "conf" or "config")</li>
+ * <li>For each configuration entry, give a "entry" element defining both name
+ * and value(s)</li>
+ * <li>The name of the entry is to be given via "id" attribute</li>
+ * <li>If the the entry has 1 value, give it as text content of the "entry"
+ * element</li>
+ * <li>If the entry has more than 1 value, insert a "value" element with a text
+ * node for each value</li>
  * </ul>
  *
  * Example:
@@ -49,39 +54,33 @@ import de.skaliant.wax.util.MiscUtils;
  *
  * @author Udo Kastilan
  */
-public class Config
-{
-	private Map<String, List<String>> entries = new HashMap<String, List<String>>();
+public class Config {
+	private Map<String, List<String>> entries = new HashMap<>();
 
 
 	/**
 	 * Load configuration from a given file.
 	 * 
-	 * @param file File
+	 * @param file
+	 *          File
 	 * @return Configuration
 	 * @throws Exception
 	 */
 	public static Config load(File file)
-		throws Exception
-	{
+		throws Exception {
 		Config conf = null;
 
-		if (file.isFile())
-		{
+		if (file.isFile()) {
 			InputStream in = null;
-			
-			try
-			{
+
+			try {
 				in = new BufferedInputStream(new FileInputStream(file));
 				conf = load(in);
 			}
-			finally
-			{
+			finally {
 				MiscUtils.close(in);
 			}
-		}
-		else
-		{
+		} else {
 			conf = new Config();
 		}
 		return conf;
@@ -89,39 +88,33 @@ public class Config
 
 
 	/**
-	 * Load configuration from a stream. The stream will not be closed by this method.
+	 * Load configuration from a stream. The stream will not be closed by this
+	 * method.
 	 * 
-	 * @param source Source stream
+	 * @param source
+	 *          Source stream
 	 * @return Configuration
 	 * @throws Exception
 	 */
 	public static Config load(InputStream source)
-		throws Exception
-	{
+		throws Exception {
 		Config conf = new Config();
 		Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 				.parse(source);
 
-		for (Element e : elements(dom.getElementsByTagName("entry")))
-		{
+		for (Element e : elements(dom.getElementsByTagName("entry"))) {
 			String id = e.getAttribute("id");
 
-			if ((id != null) && (id.length() != 0))
-			{
-				if (e.hasAttribute("value"))
-				{
+			if ((id != null) && (id.length() != 0)) {
+				if (e.hasAttribute("value")) {
 					conf.setValue(id, e.getAttribute("value"));
-				}
-				else if (e.hasChildNodes())
-				{
-					List<String> ls = new ArrayList<String>(3);
+				} else if (e.hasChildNodes()) {
+					List<String> ls = new ArrayList<>(3);
 
-					for (Element v : elements(e.getElementsByTagName("value")))
-					{
+					for (Element v : elements(e.getElementsByTagName("value"))) {
 						ls.add(v.getTextContent());
 					}
-					switch (ls.size())
-					{
+					switch (ls.size()) {
 						case 0:
 							conf.setValue(id, e.getTextContent());
 							break;
@@ -137,32 +130,30 @@ public class Config
 		}
 		return conf;
 	}
-	
-	
+
+
 	/**
 	 * Get all entry ids (parameter names) available as a set.
 	 * 
 	 * @return Set of ids
 	 */
-	public Set<String> getIds()
-	{
+	public Set<String> getIds() {
 		return entries.keySet();
 	}
-	
+
 
 	/**
 	 * Get the value count for a given entry.
 	 * 
-	 * @param id Entry id
+	 * @param id
+	 *          Entry id
 	 * @return Number of values
 	 */
-	public int getValueCount(String id)
-	{
+	public int getValueCount(String id) {
 		List<String> ls = entries.get(id);
 		int count = 0;
-		
-		if (ls != null)
-		{
+
+		if (ls != null) {
 			count = ls.size();
 		}
 		return count;
@@ -172,11 +163,11 @@ public class Config
 	/**
 	 * Check whether an entry is available.
 	 * 
-	 * @param id Entry id
+	 * @param id
+	 *          Entry id
 	 * @return Is it available
 	 */
-	public boolean hasEntry(String id)
-	{
+	public boolean hasEntry(String id) {
 		return entries.containsKey(id);
 	}
 
@@ -184,11 +175,11 @@ public class Config
 	/**
 	 * Get all values for an entry.
 	 * 
-	 * @param id Entry id
-	 * @return Values, or null if the entry is not available 
+	 * @param id
+	 *          Entry id
+	 * @return Values, or null if the entry is not available
 	 */
-	public List<String> getValues(String id)
-	{
+	public List<String> getValues(String id) {
 		return entries.get(id);
 	}
 
@@ -196,11 +187,11 @@ public class Config
 	/**
 	 * Get the (first) value of an entry.
 	 * 
-	 * @param id Entry id
+	 * @param id
+	 *          Entry id
 	 * @return Value, or null if the value is not available
 	 */
-	public String getValue(String id)
-	{
+	public String getValue(String id) {
 		return getValue(id, null);
 	}
 
@@ -209,16 +200,16 @@ public class Config
 	 * Try to interpret the value as a boolean value using Boolean.valueOf().
 	 * Returns the default value if the entry is not available.
 	 * 
-	 * @param id Entry id
-	 * @param def Default value
+	 * @param id
+	 *          Entry id
+	 * @param def
+	 *          Default value
 	 * @return Value or default value
 	 */
-	public boolean getBooleanValue(String id, boolean def)
-	{
+	public boolean getBooleanValue(String id, boolean def) {
 		String s = getValue(id, null);
-		
-		if (s != null)
-		{
+
+		if (s != null) {
 			return Boolean.valueOf(s);
 		}
 		return def;
@@ -229,15 +220,14 @@ public class Config
 	 * Try to interpret the value as a boolean value using Boolean.valueOf().
 	 * Returns false if the entry is not available.
 	 * 
-	 * @param id Entry id
+	 * @param id
+	 *          Entry id
 	 * @return Boolean value
 	 */
-	public boolean getBooleanValue(String id)
-	{
+	public boolean getBooleanValue(String id) {
 		String s = getValue(id, null);
-		
-		if (s != null)
-		{
+
+		if (s != null) {
 			return Boolean.valueOf(s);
 		}
 		return false;
@@ -247,23 +237,22 @@ public class Config
 	/**
 	 * Get the value of an entry as Integer object.
 	 * 
-	 * @param id Entry id
-	 * @param def Default value to be returned if the entry is not available or cannot be converted into a number
+	 * @param id
+	 *          Entry id
+	 * @param def
+	 *          Default value to be returned if the entry is not available or
+	 *          cannot be converted into a number
 	 * @return Value or default value
 	 */
-	public int getIntValue(String id, int def)
-	{
+	public int getIntValue(String id, int def) {
 		String s = getValue(id, null);
 		int v = def;
-		
-		if (s != null)
-		{
-			try
-			{
+
+		if (s != null) {
+			try {
 				v = Integer.valueOf(s);
 			}
-			catch (NumberFormatException ex)
-			{
+			catch (NumberFormatException ex) {
 				//
 			}
 		}
@@ -274,17 +263,17 @@ public class Config
 	/**
 	 * Get the value of an entry as Integer object.
 	 * 
-	 * @param id Entry id
+	 * @param id
+	 *          Entry id
 	 * @return Converted value or null, if the entry is not available
-	 * @throws NumberFormatException If the value cannot be converted into a number
+	 * @throws NumberFormatException
+	 *           If the value cannot be converted into a number
 	 */
 	public Integer getIntValue(String id)
-		throws NumberFormatException
-	{
+		throws NumberFormatException {
 		String s = getValue(id, null);
-		
-		if (s != null)
-		{
+
+		if (s != null) {
 			return Integer.valueOf(s);
 		}
 		return null;
@@ -294,17 +283,17 @@ public class Config
 	/**
 	 * Get a (the first) value.
 	 * 
-	 * @param id Entry id
-	 * @param def Default value to be returned if the entry is not available
+	 * @param id
+	 *          Entry id
+	 * @param def
+	 *          Default value to be returned if the entry is not available
 	 * @return Value of default value
 	 */
-	public String getValue(String id, String def)
-	{
+	public String getValue(String id, String def) {
 		List<String> ls = entries.get(id);
 		String v = def;
 
-		if ((ls != null) && !ls.isEmpty())
-		{
+		if ((ls != null) && !ls.isEmpty()) {
 			v = ls.get(0);
 		}
 		return v;
@@ -314,11 +303,12 @@ public class Config
 	/**
 	 * Set values for an entry.
 	 * 
-	 * @param id Entry id
-	 * @param values values
+	 * @param id
+	 *          Entry id
+	 * @param values
+	 *          values
 	 */
-	private void setValues(String id, List<String> values)
-	{
+	private void setValues(String id, List<String> values) {
 		entries.put(id, values);
 	}
 
@@ -326,23 +316,20 @@ public class Config
 	/**
 	 * Collect all element nodes in a node list into a list.
 	 * 
-	 * @param nl Node list
+	 * @param nl
+	 *          Node list
 	 * @return Element list
 	 */
-	private static List<Element> elements(NodeList nl)
-	{
+	private static List<Element> elements(NodeList nl) {
 		List<Element> ls = Collections.emptyList();
 		int len = nl.getLength();
 
-		if (len > 0)
-		{
-			ls = new ArrayList<Element>(len);
-			for (int i = 0; i < len; i++)
-			{
+		if (len > 0) {
+			ls = new ArrayList<>(len);
+			for (int i = 0; i < len; i++) {
 				Node n = nl.item(i);
 
-				if (n.getNodeType() == Node.ELEMENT_NODE)
-				{
+				if (n.getNodeType() == Node.ELEMENT_NODE) {
 					ls.add((Element) n);
 				}
 			}
@@ -354,11 +341,12 @@ public class Config
 	/**
 	 * Sets a single value.
 	 * 
-	 * @param id Entry id
-	 * @param value Value
+	 * @param id
+	 *          Entry id
+	 * @param value
+	 *          Value
 	 */
-	private void setValue(String id, String value)
-	{
+	private void setValue(String id, String value) {
 		entries.put(id, Collections.singletonList(value));
 	}
 }

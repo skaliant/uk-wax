@@ -14,71 +14,64 @@ import de.skaliant.wax.core.model.Scope;
  *
  * @author Udo Kastilan
  */
-public class RequestScope
-	implements Scope<HttpServletRequest>
-{
+class RequestScope implements Scope<HttpServletRequest> {
 	private HttpServletRequest request = null;
-	
-	
-	public RequestScope(HttpServletRequest request)
-	{
+
+
+	RequestScope(HttpServletRequest request) {
 		this.request = request;
 	}
-	
-	
-	public HttpServletRequest getSource()
-	{
+
+
+	@Override
+	public HttpServletRequest getSource() {
 		return request;
 	}
-	
 
-	public Object get(String name)
-	{
+
+	@Override
+	public Object get(String name) {
 		return request.getAttribute(name);
 	}
 
-	
-	public <T> T get(String name, Class<T> type)
-	{
+
+	@Override
+	public <T> T get(String name, Class<T> type) {
 		return type.cast(get(name));
 	}
-	
 
-	public void set(String name, Object value)
-	{
-		if (value == null)
-		{
+
+	@Override
+	public void set(String name, Object value) {
+		if (value == null) {
 			remove(name);
-		}
-		else
-		{
+		} else {
 			request.setAttribute(name, value);
 		}
 	}
 
-	
-	public boolean has(String name)
-	{
+
+	@Override
+	public boolean has(String name) {
 		return get(name) != null;
 	}
 
-	
-	public void remove(String name)
-	{
-		if (has(name))
-		{
+
+	@Override
+	public void remove(String name) {
+		if (has(name)) {
 			request.removeAttribute(name);
 		}
 	}
 
 
-	public List<String> getNames()
-	{
-		List<String> ls = new ArrayList<String>();
-		
-		for (Enumeration<?> e = request.getAttributeNames(); e.hasMoreElements(); )
-		{
-			ls.add((String) e.nextElement());
+	@Override
+	public List<String> getNames() {
+		List<String> ls = new ArrayList<>();
+
+		for (Enumeration<String> e = request.getAttributeNames(); e
+				.hasMoreElements();) {
+			ls.add(e.nextElement());
 		}
 		return ls;
 	}

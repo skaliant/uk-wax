@@ -12,8 +12,7 @@ import java.io.OutputStream;
  *
  * @author Udo Kastilan
  */
-interface StorageHandler
-{
+interface StorageHandler {
 	/**
 	 * Gets an output stream for data during parse process.
 	 * 
@@ -44,7 +43,8 @@ interface StorageHandler
 	 */
 	void writeTo(File file)
 		throws IOException;
-	
+
+
 	/**
 	 * 
 	 * 

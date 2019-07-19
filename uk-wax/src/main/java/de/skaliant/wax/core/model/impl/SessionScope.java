@@ -14,70 +14,63 @@ import de.skaliant.wax.core.model.Scope;
  *
  * @author Udo Kastilan
  */
-public class SessionScope
-	implements Scope<HttpSession>
-{
+class SessionScope implements Scope<HttpSession> {
 	private HttpSession sess = null;
-	
-	
-	public SessionScope(HttpSession sess)
-	{
+
+
+	SessionScope(HttpSession sess) {
 		this.sess = sess;
 	}
 
-	
-	public HttpSession getSource()
-	{
+
+	@Override
+	public HttpSession getSource() {
 		return sess;
 	}
-	
 
-	public Object get(String name)
-	{
+
+	@Override
+	public Object get(String name) {
 		return sess.getAttribute(name);
 	}
 
-	
-	public <T> T get(String name, Class<T> type)
-	{
+
+	@Override
+	public <T> T get(String name, Class<T> type) {
 		return type.cast(get(name));
 	}
-	
 
-	public void set(String name, Object value)
-	{
-		if (value == null)
-		{
+
+	@Override
+	public void set(String name, Object value) {
+		if (value == null) {
 			remove(name);
-		}
-		else
-		{
+		} else {
 			sess.setAttribute(name, value);
 		}
 	}
 
-	
-	public boolean has(String name)
-	{
+
+	@Override
+	public boolean has(String name) {
 		return get(name) != null;
 	}
 
-	
-	public void remove(String name)
-	{
-		if (has(name))
-		{
+
+	@Override
+	public void remove(String name) {
+		if (has(name)) {
 			sess.removeAttribute(name);
 		}
 	}
 
 
-	public List<String> getNames()
-	{
-		List<String> ls = new ArrayList<String>();
-		
-		for (Enumeration<?> e = sess.getAttributeNames(); e.hasMoreElements(); )
-		{
+	@Override
+	public List<String> getNames() {
+		List<String> ls = new ArrayList<>();
+
+		for (Enumeration<String> e = sess.getAttributeNames(); e
+				.hasMoreElements();) {
 			ls.add((String) e.nextElement());
 		}
 		return ls;

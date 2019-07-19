@@ -1,27 +1,24 @@
 package de.skaliant.wax.core.model;
 
-
-
 /**
- * Configuration bean of the ControllerManager. The controller manager is the class responsible
- * for finding and managing controllers.
+ * Configuration bean of the ControllerManager. The controller manager is the
+ * class responsible for finding and managing controllers.
  *
  * @author Udo Kastilan
  */
-public class ControllerManagerConfig
-{
+public class ControllerManagerConfig {
 	private ResolutionMode mode = ResolutionMode.EXPLICIT;
 	private String packages = null;
 	private String classes = null;
 
 
 	/**
-	 * ControllerManager working mode. <code>ResolutionMode.EXPLICIT</code> is default.
+	 * ControllerManager working mode. <code>ResolutionMode.EXPLICIT</code> is
+	 * default.
 	 * 
 	 * @return Working mode
 	 */
-	public ResolutionMode getMode()
-	{
+	public ResolutionMode getMode() {
 		return mode;
 	}
 
@@ -29,22 +26,21 @@ public class ControllerManagerConfig
 	/**
 	 * See {@link #getMode()}.
 	 * 
-	 * @param mode Working mode
+	 * @param mode
+	 *          Working mode
 	 */
-	public void setMode(ResolutionMode mode)
-	{
+	public void setMode(ResolutionMode mode) {
 		this.mode = mode;
 	}
 
 
 	/**
-	 * The names of all declared packages which may contain controller classes, separated by whitespace,
-	 * comma, or semicolon.
+	 * The names of all declared packages which may contain controller classes,
+	 * separated by whitespace, comma, or semicolon.
 	 * 
 	 * @return Controller packages
 	 */
-	public String getPackages()
-	{
+	public String getPackages() {
 		return packages;
 	}
 
@@ -52,23 +48,22 @@ public class ControllerManagerConfig
 	/**
 	 * See {@link #getPackages()}.
 	 * 
-	 * @param packages Controller packages
+	 * @param packages
+	 *          Controller packages
 	 */
-	public void setPackages(String packages)
-	{
+	public void setPackages(String packages) {
 		this.packages = packages;
 	}
 
 
 	/**
-	 * The names of all declared controller classes, separated by whitespace, comma, or semicolon.
-	 * The class names may be either fully qualified or simple names to be expanded by the controller
-	 * packages.
+	 * The names of all declared controller classes, separated by whitespace,
+	 * comma, or semicolon. The class names may be either fully qualified or
+	 * simple names to be expanded by the controller packages.
 	 * 
 	 * @return Class names
 	 */
-	public String getClasses()
-	{
+	public String getClasses() {
 		return classes;
 	}
 
@@ -76,10 +71,10 @@ public class ControllerManagerConfig
 	/**
 	 * See {@link #getClasses()}.
 	 * 
-	 * @param classes Class names
+	 * @param classes
+	 *          Class names
 	 */
-	public void setClasses(String classes)
-	{
+	public void setClasses(String classes) {
 		this.classes = classes;
 	}
 }

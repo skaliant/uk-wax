@@ -11,9 +11,7 @@ import java.io.InputStream;
  *
  * @author Udo Kastilan
  */
-public class FileProvider
-	implements StreamProvider
-{
+public class FileProvider implements StreamProvider {
 	private String contentType = null;
 	private String name = null;
 	private File file = null;
@@ -23,8 +21,7 @@ public class FileProvider
 	 * @param file
 	 * @param contentType
 	 */
-	public FileProvider(File file, String contentType)
-	{
+	public FileProvider(File file, String contentType) {
 		this(file, contentType, file.getName());
 	}
 
@@ -34,34 +31,34 @@ public class FileProvider
 	 * @param contentType
 	 * @param name
 	 */
-	public FileProvider(File file, String contentType, String name)
-	{
+	public FileProvider(File file, String contentType, String name) {
 		this.file = file;
 		this.contentType = contentType;
 		this.name = name;
 	}
 
 
-	public InputStream getStream() throws IOException
-	{
+	@Override
+	public InputStream getStream()
+		throws IOException {
 		return new FileInputStream(file);
 	}
 
 
-	public String getContentType()
-	{
+	@Override
+	public String getContentType() {
 		return contentType;
 	}
 
 
-	public String getName()
-	{
+	@Override
+	public String getName() {
 		return name;
 	}
 
 
-	public long getSize()
-	{
+	@Override
+	public long getSize() {
 		return file.length();
 	}
 }

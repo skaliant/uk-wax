@@ -21,11 +21,11 @@ public class MultipartParser
 	/**
 	 * List of StorageHandlers which need to be cleaned up
 	 */
-	private List<StorageHandler> storages = new ArrayList<StorageHandler>();
+	private List<StorageHandler> storages = new ArrayList<>();
 	/**
 	 * Store parts in this list, so they can be accessed multiple times
 	 */
-	private List<Part> parts = new ArrayList<Part>();
+	private List<Part> parts = new ArrayList<>();
 	/**
 	 * Input stream allowing bytes to be pushed back
 	 */
@@ -102,7 +102,7 @@ public class MultipartParser
 		if (!eos)
 		{
 			StorageHandler sh = FlexibleStorageHandler.create(tempDir, threshold);
-			List<HeaderField> headers = new ArrayList<HeaderField>(3);
+			List<HeaderField> headers = new ArrayList<>(3);
 			OutputStream out = null;
 			String contentType = null;
 			String name = null;

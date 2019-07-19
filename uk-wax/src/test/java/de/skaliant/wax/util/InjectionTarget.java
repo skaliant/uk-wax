@@ -14,8 +14,7 @@ import java.util.Set;
  *
  * @author Udo Kastilan
  */
-public class InjectionTarget
-{
+public class InjectionTarget {
 	private int intField = 0;
 	private char charField = 0;
 	private boolean boolField = false;
@@ -37,230 +36,192 @@ public class InjectionTarget
 	private Date dateField = null;
 
 
-	public Date getDateField()
-	{
+	public Date getDateField() {
 		return dateField;
 	}
 
 
-	public void setDateField(Date dateField)
-	{
+	public void setDateField(Date dateField) {
 		this.dateField = dateField;
 	}
 
 
-	public BigInteger getBigIntegerField()
-	{
+	public BigInteger getBigIntegerField() {
 		return bigIntegerField;
 	}
 
 
-	public void setBigIntegerField(BigInteger bigIntegerField)
-	{
+	public void setBigIntegerField(BigInteger bigIntegerField) {
 		this.bigIntegerField = bigIntegerField;
 	}
 
 
-	public InjectionEnum getEnumField()
-	{
+	public InjectionEnum getEnumField() {
 		return enumField;
 	}
 
 
-	public void setEnumField(InjectionEnum enumField)
-	{
+	public void setEnumField(InjectionEnum enumField) {
 		this.enumField = enumField;
 	}
 
 
-	public List<Integer> getIntegerListField()
-	{
+	public List<Integer> getIntegerListField() {
 		return integerListField;
 	}
 
 
-	public void setIntegerListField(List<Integer> integerListField)
-	{
+	public void setIntegerListField(List<Integer> integerListField) {
 		this.integerListField = integerListField;
 	}
 
 
-	public List<String> getStringListField()
-	{
+	public List<String> getStringListField() {
 		return stringListField;
 	}
 
 
-	public void setStringListField(List<String> stringListField)
-	{
+	public void setStringListField(List<String> stringListField) {
 		this.stringListField = stringListField;
 	}
 
 
-	public Set<Integer> getIntegerSetField()
-	{
+	public Set<Integer> getIntegerSetField() {
 		return integerSetField;
 	}
 
 
-	public void setIntegerSetField(Set<Integer> integerSetField)
-	{
+	public void setIntegerSetField(Set<Integer> integerSetField) {
 		this.integerSetField = integerSetField;
 	}
 
 
-	public int getIntField()
-	{
+	public int getIntField() {
 		return intField;
 	}
 
 
-	public String getStringField()
-	{
+	public String getStringField() {
 		return stringField;
 	}
 
 
-	public void setStringField(String stringField)
-	{
+	public void setStringField(String stringField) {
 		this.stringField = stringField;
 	}
 
 
-	public BigDecimal getBigDecimalField()
-	{
+	public BigDecimal getBigDecimalField() {
 		return bigDecimalField;
 	}
 
 
-	public void setBigDecimalField(BigDecimal bigDecimalField)
-	{
+	public void setBigDecimalField(BigDecimal bigDecimalField) {
 		this.bigDecimalField = bigDecimalField;
 	}
 
 
-	public Object getObjectField()
-	{
+	public Object getObjectField() {
 		return objectField;
 	}
 
 
-	public void setObjectField(Object objectField)
-	{
+	public void setObjectField(Object objectField) {
 		this.objectField = objectField;
 	}
 
 
-	public int[] getIntArrayField()
-	{
+	public int[] getIntArrayField() {
 		return intArrayField;
 	}
 
 
-	public void setIntArrayField(int[] intArrayField)
-	{
+	public void setIntArrayField(int[] intArrayField) {
 		this.intArrayField = intArrayField;
 	}
 
 
-	public String[] getStringArrayField()
-	{
+	public String[] getStringArrayField() {
 		return stringArrayField;
 	}
 
 
-	public void setStringArrayField(String[] stringArrayField)
-	{
+	public void setStringArrayField(String[] stringArrayField) {
 		this.stringArrayField = stringArrayField;
 	}
 
 
-	public void setIntField(int intField)
-	{
+	public void setIntField(int intField) {
 		this.intField = intField;
 	}
 
 
-	public char getCharField()
-	{
+	public char getCharField() {
 		return charField;
 	}
 
 
-	public void setCharField(char charField)
-	{
+	public void setCharField(char charField) {
 		this.charField = charField;
 	}
 
 
-	public boolean isBoolField()
-	{
+	public boolean isBoolField() {
 		return boolField;
 	}
 
 
-	public void setBoolField(boolean boolField)
-	{
+	public void setBoolField(boolean boolField) {
 		this.boolField = boolField;
 	}
 
 
-	public byte getByteField()
-	{
+	public byte getByteField() {
 		return byteField;
 	}
 
 
-	public void setByteField(byte byteField)
-	{
+	public void setByteField(byte byteField) {
 		this.byteField = byteField;
 	}
 
 
-	public short getShortField()
-	{
+	public short getShortField() {
 		return shortField;
 	}
 
 
-	public void setShortField(short shortField)
-	{
+	public void setShortField(short shortField) {
 		this.shortField = shortField;
 	}
 
 
-	public long getLongField()
-	{
+	public long getLongField() {
 		return longField;
 	}
 
 
-	public void setLongField(long longField)
-	{
+	public void setLongField(long longField) {
 		this.longField = longField;
 	}
 
 
-	public float getFloatField()
-	{
+	public float getFloatField() {
 		return floatField;
 	}
 
 
-	public void setFloatField(float floatField)
-	{
+	public void setFloatField(float floatField) {
 		this.floatField = floatField;
 	}
 
 
-	public double getDoubleField()
-	{
+	public double getDoubleField() {
 		return doubleField;
 	}
 
 
-	public void setDoubleField(double doubleField)
-	{
+	public void setDoubleField(double doubleField) {
 		this.doubleField = doubleField;
 	}
 }

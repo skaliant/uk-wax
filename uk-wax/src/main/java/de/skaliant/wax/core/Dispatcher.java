@@ -19,9 +19,9 @@ import de.skaliant.wax.core.model.MapBasedParameterProvider;
 import de.skaliant.wax.core.model.ParameterProvider;
 import de.skaliant.wax.core.model.RequestAttributeRedirectStore;
 import de.skaliant.wax.core.model.RouterResult;
-import de.skaliant.wax.core.model.UploadInjector;
 import de.skaliant.wax.core.model.impl.DefaultCall;
 import de.skaliant.wax.upload.MultipartParser;
+import de.skaliant.wax.upload.UploadInjector;
 import de.skaliant.wax.util.Injector;
 import de.skaliant.wax.util.Pair;
 import de.skaliant.wax.util.logging.Log;
@@ -32,8 +32,7 @@ import de.skaliant.wax.util.logging.Log;
  * 
  * @author Udo Kastilan
  */
-public class Dispatcher
-{
+public class Dispatcher {
 	private final Log LOG = Log.get(Dispatcher.class);
 	private UploadInjector uploadInjector = new UploadInjector();
 	private Injector injector = new Injector();
@@ -46,67 +45,74 @@ public class Dispatcher
 	/**
 	 * Create the instance, give information.
 	 * 
-	 * @param info Dispatcher information
+	 * @param info
+	 *          Dispatcher information
 	 */
-	public Dispatcher(DispatcherInfo info)
-	{
+	public Dispatcher(DispatcherInfo info) {
 		this.info = info;
 	}
-	
-	
+
+
 	/**
 	 * Returns the info object.
 	 * 
 	 * @return
 	 */
-	public DispatcherInfo getInfo()
-	{
+	public DispatcherInfo getInfo() {
 		return info;
 	}
 
 
 	/**
-	 * Handle a call. Typically, a servlet or a filter will be activated and forward to this method.
-	 * Servlet instances should give <code>request.getPathInfo()</code> as path, while Filter instances
-	 * should give <code>request.getServletPath()</code>. This extra path information will be examined
-	 * by the router in order to find a controller/action responsible for the request.
+	 * Handle a call. Typically, a servlet or a filter will be activated and
+	 * forward to this method. Servlet instances should give
+	 * <code>request.getPathInfo()</code> as path, while Filter instances should
+	 * give <code>request.getServletPath()</code>. This extra path information
+	 * will be examined by the router in order to find a controller/action
+	 * responsible for the request.
 	 * 
-	 * @param app ServletContext (application scope)
-	 * @param req Request
-	 * @param resp Response
-	 * @param dispatcherPath The URI path which triggered the dispatcher
-	 * @param path Extra path information (any rest after whatever has triggered the servlet/filter)
+	 * @param app
+	 *          ServletContext (application scope)
+	 * @param req
+	 *          Request
+	 * @param resp
+	 *          Response
+	 * @param dispatcherPath
+	 *          The URI path which triggered the dispatcher
+	 * @param path
+	 *          Extra path information (any rest after whatever has triggered the
+	 *          servlet/filter)
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void handle(ServletContext app, HttpServletRequest req, HttpServletResponse resp, String dispatcherPath, String pathInfo)
-		throws ServletException, IOException
-	{
+	public void handle(ServletContext app, HttpServletRequest req,
+			HttpServletResponse resp, String dispatcherPath, String pathInfo)
+		throws ServletException, IOException {
 		RouterResult rr = info.getRouter().route(info, dispatcherPath, pathInfo);
 
-		if (rr == null)
-		{
+		if (rr == null) {
 			// Nothing found, not even the default controller? 404!
-			LOG.info("Path [" + req.getRequestURI() + "]: no controller found, sending 404");
+			LOG.info("Path [" + req.getRequestURI()
+					+ "]: no controller found, sending 404");
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-		}
-		else
-		{
+		} else {
 			Call call = new DefaultCall(info, rr, app, req, resp);
 			/*
 			 * Combine remaining path parts and handle action
 			 */
-			LOG.info("Path [" + req.getRequestURI() + "]: will be handled by controller [" + rr.getController().getName() + "], action ["
-					+ rr.getAction().getName() + "] - " + rr.getController().getType().getName() + ":" + rr.getAction().getMethod().getName()
-					+ "(); path info is " + rr.getPathInfo());
-			try
-			{
+			LOG.info("Path [" + req.getRequestURI()
+					+ "]: will be handled by controller [" + rr.getController().getName()
+					+ "], action [" + rr.getAction().getName() + "] - "
+					+ rr.getController().getType().getName() + ":"
+					+ rr.getAction().getMethod().getName() + "(); path info is "
+					+ rr.getPathInfo());
+			try {
 				handle(call);
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				LOG.error("Error handling call", ex);
-				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						ex.getMessage());
 			}
 		}
 	}
@@ -121,8 +127,7 @@ public class Dispatcher
 	 *           Error when redirecting/responding
 	 */
 	private void handle(Call call)
-		throws Exception
-	{
+		throws Exception {
 		Class<? extends Guardian> guardian = call.getAction().getGuardian();
 		ParameterProvider params = call;
 		MultipartParser mup = null;
@@ -131,22 +136,18 @@ public class Dispatcher
 		Object result = null;
 		long time = 0;
 
-		if (guardian == null)
-		{
+		if (guardian == null) {
 			guardian = call.getController().getGuardian();
 		}
-		try
-		{
+		try {
 			/*
 			 * Check access privilege if any
 			 */
-			if (guardian != null)
-			{
+			if (guardian != null) {
 				Guardian guard = guardian.newInstance();
 				Result guardResult = guard.admit(call);
 
-				if (guardResult != null)
-				{
+				if (guardResult != null) {
 					/*
 					 * Default response; real Guardians however are expected to redirect
 					 * to i.e. a login page via RedirectException
@@ -156,8 +157,8 @@ public class Dispatcher
 				}
 			}
 			/*
-			 * Try to restore any request attributes which might have been stored into the session
-			 * to survive a redirect
+			 * Try to restore any request attributes which might have been stored into
+			 * the session to survive a redirect
 			 */
 			RequestAttributeRedirectStore.restore(call.getRequest());
 			/*
@@ -171,19 +172,24 @@ public class Dispatcher
 			 * (ServletContext), and Config; also: set path info elements and
 			 * parameters
 			 */
-			List<Pair<Class<?>, ?>> spex = new ArrayList<Pair<Class<?>, ?>>(); 
-			
-			spex.add(new Pair<Class<?>, Object>(ServletContext.class, call.getApplicationScope().getSource()));
-			spex.add(new Pair<Class<?>, Object>(HttpServletRequest.class, call.getRequestScope().getSource()));
-			spex.add(new Pair<Class<?>, Object>(HttpServletResponse.class, call.getResponse()));
+			List<Pair<Class<?>, ?>> spex = new ArrayList<>();
+
+			spex.add(new Pair<Class<?>, Object>(ServletContext.class,
+					call.getApplicationScope().getSource()));
+			spex.add(new Pair<Class<?>, Object>(HttpServletRequest.class,
+					call.getRequestScope().getSource()));
+			spex.add(new Pair<Class<?>, Object>(HttpServletResponse.class,
+					call.getResponse()));
 			spex.add(new Pair<Class<?>, Object>(Config.class, info.findConfig(call)));
 			/*
-			 * 2.) Check for an upload; in this case, we need to handle parameters a different way and inject uploaded blobs
+			 * 2.) Check for an upload; in this case, we need to handle parameters a
+			 * different way and inject uploaded blobs
 			 */
-			if (call.isUpload())
-			{
-				mup = MultipartParser.create(call.getContentType(), call.getRequest().getInputStream());
-				params = MapBasedParameterProvider.create(call, mup, "utf-8"); // TOOD make encoding configurable
+			if (call.isUpload()) {
+				mup = MultipartParser.create(call.getContentType(),
+						call.getRequest().getInputStream());
+				// TODO make encoding configurable
+				params = MapBasedParameterProvider.create(call, mup, "utf-8");
 				uploadInjector.injectUploads(ctrl, mup);
 			}
 			/*
@@ -194,12 +200,12 @@ public class Dispatcher
 			 * 4.) Inject parameters, magic values, and path information into method
 			 * arguments
 			 */
-			args = injector.injectMethodArguments(call.getAction().getMethod(), params, call.getPathInfoParts(), spex);
+			args = injector.injectMethodArguments(call.getAction().getMethod(),
+					params, call.getPathInfoParts(), spex);
 			/*
 			 * 5.) Init method(s)
 			 */
-			for (Method meth : call.getController().getInitMethods())
-			{
+			for (Method meth : call.getController().getInitMethods()) {
 				meth.invoke(ctrl);
 			}
 			/*
@@ -212,37 +218,28 @@ public class Dispatcher
 			/*
 			 * 7.) Exit method(s)
 			 */
-			for (Method meth : call.getController().getExitMethods())
-			{
+			for (Method meth : call.getController().getExitMethods()) {
 				meth.invoke(ctrl);
 			}
 			/*
 			 * 8.) Use the result or bail out
 			 */
-			if (result instanceof Result)
-			{
+			if (result instanceof Result) {
 				Result.class.cast(result).handle(call);
-			}
-			else if (result != null)
-			{
+			} else if (result != null) {
 				Result.view(result.toString()).handle(call);
-			}
-			else
-			{
+			} else {
 				throw new Exception("No result defined");
 			}
 		}
-		catch (Exception ex)
-		{
+		catch (Exception ex) {
 			throw ex;
 		}
-		finally
-		{
+		finally {
 			/*
 			 * Clean up upload handling, if necessary (delete temporary files)
 			 */
-			if (mup != null)
-			{
+			if (mup != null) {
 				mup.cleanup();
 			}
 		}
